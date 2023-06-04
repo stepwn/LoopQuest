@@ -94,7 +94,7 @@ footer, header, hgroup, menu, nav, section {
 	body {padding:0;margin:0;background:#111;overflow:hidden;image-rendering:-moz-crisp-edges; image-rendering:-webkit-optimize-contrast;border-top:2px solid #707070;}
 	
 	canvas { position:absolute;image-rendering:optimizeSpeed;}
-	#background { background:url('../img/common/loading.png') no-repeat center center, #000;}
+	/*#background { background:url('../img/common/loading.png') no-repeat center center, #000;width:fit-content;margin:auto;float:left;position: fixed;}*/	
 	.error #background { background:url('../img/common/loading-error.png') no-repeat center center, #000;}
 	
 	#background, #foreground { margin:0; padding:0;}
@@ -125,7 +125,7 @@ footer, header, hgroup, menu, nav, section {
     
 /* Common rules */
     
-    body.upscaled.game {background:#000;}
+    body.upsalded.game {background:#000;}
     .game #logo {display:none;-moz-animation:none;-webkit-animation:none;-o-animation:none;-ms-animation:none;animation:none;}
         
     #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, .icon, #tilt, .parchment-left, .parchment-middle, .parchment-right, .avatar, .facebook, .twitter, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background:url('../img/1/spritesheet.png');image-rendering:-moz-crisp-edges; image-rendering:-webkit-optimize-contrast;}
@@ -165,7 +165,7 @@ footer, header, hgroup, menu, nav, section {
     #population span:nth-child(1) {color:#FCE045;}
     #population.visible {opacity:1;pointer-events:auto;}
     
-    .barbutton {background:url('../img/1/barsheet.png');image-rendering:-moz-crispt-edges;position:absolute;}
+    .barbutton {background:url('../img/2/barsheet.png');image-rendering:-moz-crispt-edges;position:absolute;}
     
     #chatbox {background:url('../img/1/barsheet.png');image-rendering:-moz-crisp-edges;position:absolute;left:50%;z-index:5;-moz-transition:0.2s bottom ease;-webkit-transition:0.2s bottom ease;-o-transition:0.2s bottom ease;-ms-transition:0.2s bottom ease;transition:0.2s bottom ease;}
     .bubble p {-moz-user-select:none;-webkit-user-select:none;}
@@ -217,7 +217,7 @@ footer, header, hgroup, menu, nav, section {
     #about .link a:hover {color:#d83939;}
 
     footer {font-family:'GraphicPixel';position:absolute;bottom:5%;left:0;text-align:center;width:100%;color:#c6c0a3;-moz-transition:0.2s opacity linear;-webkit-transition:0.2s opacity linear;-o-transition:0.2s opacity linear;-ms-transition:0.2s opacity linear;transition:0.2s opacity linear;}
-    .upscaled.game footer {color:#8a8a8a;}
+    .upsalded.game footer {color:#8a8a8a;}
     
     .intro footer {opacity:1;}
     footer:hover {opacity:1;}
@@ -261,8 +261,8 @@ footer, header, hgroup, menu, nav, section {
     .animate .parchment-left {-moz-animation:parchleft 1s ease 1;-webkit-animation:parchleft 1s ease 1;-o-animation:parchleft 1s ease 1;-ms-animation:parchleft 1s ease 1;animation:parchleft 1s ease 1;}
     .animate .parchment-right {-moz-animation:parchright 1s ease 1;-webkit-animation:parchright 1s ease 1;-o-animation:parchright 1s ease 1;-ms-animation:parchright 1s ease 1;animation:parchright 1s ease 1;}
 
-    #credits, #createcharacter, #loadcharacter, #confirmation, #death, #error, #about {opacity:0;pointer-events:none;-moz-transition:none;-webkit-transition:none;-o-transition:none;-ms-transition:none;transition:none;}
-    .credits #credits, .createcharacter #createcharacter, .loadcharacter #loadcharacter, .confirmation #confirmation, .death #death, .error #error, .about #about {opacity:1;pointer-events:auto;-moz-transition:0.5s opacity linear;-webkit-transition:0.5s opacity linear;-o-transition:0.5s opacity linear;-ms-transition:0.5s opacity linear;transition:0.5s opacity linear;}
+    #credits, #createcharacter, #loadcharacter, #confirmation, #death, #error, #about,#inventory {opacity:0;pointer-events:none;-moz-transition:none;-webkit-transition:none;-o-transition:none;-ms-transition:none;transition:none;}
+    .credits #credits, .createcharacter #createcharacter, .loadcharacter #loadcharacter, .confirmation #confirmation, .death #death, .error #error, .about #about,.inventory #inventory {opacity:1;pointer-events:auto;-moz-transition:0.5s opacity linear;-webkit-transition:0.5s opacity linear;-o-transition:0.5s opacity linear;-ms-transition:0.5s opacity linear;transition:0.5s opacity linear;}
 
 /* States & Transitions */
 
@@ -414,20 +414,26 @@ footer, header, hgroup, menu, nav, section {
     @-o-keyframes invincible { from {background:#fa6a00;} to {background:#fabc00;} }
     @-ms-keyframes invincible { from {background:#fa6a00;} to {background:#fabc00;} }
 
-
+    #achievementsbuttond {
+        background-position: -432px -51px;
+        top: 3px;
+        left: 1305px;
+    }
+    
 
 	@media screen and (min-width: 1501px) {
 	    
-	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
-	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #population {background-image:url('../img/3/barsheet.png');}
-	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background:url('../img/3/achievements.png');}
+	    .upsalded #logo, .upsalded #logosparks, .upsalded .left-ornament, .upsalded .right-ornament, .upsalded #character, .upsalded #character div, .upsalded .button, .upsalded .button div, .upsalded #respawn, .upsalded #scroll, .upsalded #instructions, .upsalded .icon, .upsalded #tilt, .upsalded .parchment-left, .upsalded .parchment-middle, .upsalded .parchment-right, .upsalded .avatar, .upsalded .facebook, .upsalded .twitter, .upsalded .close, .upsalded .ribbon .top, .upsalded .ribbon .bottom, .upsalded #about .img, .upsalded .ext-link {background-image:url('../img/3/spritesheet.png');}
+	    .upsalded #bar-container, .upsalded #healthbar, .upsalded .barbutton, .upsalded #chatbox, .upsalded #population {background-image:url('../img/3/barsheet.png');}
+        
+	    .upsalded #achievements, .upsalded #achievements li, .upsalded .coin, .upsalded #achievement-notification, .upsalded #coinsparks, .upsalded .achievement-sharing a, .upsalded #previous, .upsalded #next {background:url('../img/3/achievements.png');}
 	    
 	    
-        body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood2.png') no-repeat 1587px 138px, url('../img/1/wood2.png') no-repeat 51px 519px, url('../img/1/wood3.png') no-repeat 228px 219px, url('../img/1/wood.png') repeat, #000; background-size:auto, 15px auto, 15px auto, 60px auto, 384px;}
-        body {background:-webkit-gradient(radial, center center, 360, center center, 1200, from(rgba(0,0,0,0)), to(rgba(0,0,0,1))), url('../img/3/wood2.png') no-repeat 1587px 138px, url('../img/3/wood2.png') no-repeat 51px 519px, url('../img/3/wood3.png') no-repeat 228px 219px, url('../img/3/wood.png') repeat, #000; background-size:auto, 15px auto, 15px auto, 60px auto, 384px;}
+        body {background:-moz-radial-gradient(rgba(0,0,0,.5) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood2.png') no-repeat 1587px 138px, url('../img/1/wood2.png') no-repeat 51px 519px, url('../img/1/wood3.png') no-repeat 228px 219px, url('../img/1/wood.png') repeat, #000; background-size:auto, 15px auto, 15px auto, 60px auto, 384px;}
+        body {background:-webkit-gradient(radial, center center, 360, center center, 1200, from(rgba(0,0,0,0.5)), to(rgba(0,0,0,1))), url('../img/3/wood2.png') no-repeat 1587px 138px, url('../img/3/wood2.png') no-repeat 51px 519px, url('../img/3/wood3.png') no-repeat 228px 219px, url('../img/3/wood.png') repeat, #000; background-size:auto, 15px auto, 15px auto, 60px auto, 384px;}
         #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:1266px auto;}
         #logo {height:126px;width:687px;position:absolute;top:10%;left:50%;margin-left:-344px;z-index:3;}
-        #logosparks {width:687px;height:126px;z-index:4;-moz-animation:logo3 .8s steps(6, end) infinite;-webkit-animation:logo3 .8s steps(6, end) infinite;-o-animation:logo3 .8s steps(6, end) infinite;-ms-animation:logo3 .8s steps(6, end) infinite;}
+        .logosparks {z-index:4;-moz-animation:logo3 .8s steps(6, end) infinite;-webkit-animation:logo3 .8s steps(6, end) infinite;-o-animation:logo3 .8s steps(6, end) infinite;-ms-animation:logo3 .8s steps(6, end) infinite;}
         #parchment, #loadcharacter, #confirmation, #error {width:1266px;height:546px;position:absolute;top:55%;left:50%;margin-left:-633px;margin-top:-273px;font-size:30px;text-align:center;z-index:2;}
         #parchment h1 {margin-top:60px;font-weight:normal;}
         .left-ornament, .right-ornament {height:36px;width:93px;display:inline-block;margin:0 20px;position:relative;top:12px;}
@@ -496,7 +502,7 @@ footer, header, hgroup, menu, nav, section {
 	    #bar-container {height:51px;top:-3px;background-size:1440px;}
 
 		#healthbar {height:39px;background-position:0 -51px;width:306px;top:9px;background-size:1440px;z-index:20;}
-		#hitpoints {width:0px;height:33px;top:12px;left:33px;z-index:10;position:absolute;}
+		#hitpoints {height:33px;top:12px;left:33px;z-index:10;position:absolute;}
 
         #armor, #weapon {width:48px;height:48px;position:absolute;background-size:288px;background-position:-96px;}
         #weapon {left:312px;top:3px;background-size:288px;}
@@ -513,19 +519,19 @@ footer, header, hgroup, menu, nav, section {
 
 
         .barbutton {background-size:1440px;height:45px;width:42px;}
-        #chatbutton {background-position:-306px -51px;top:3px;left:1260px;}
-        #chatbutton:hover {background-position:-348px -51px;}
-        #chatbutton.active {background-position:-390px -51px;}
-        #achievementsbutton {background-position:-432px -51px;top:3px;left:1305px;}
-        #achievementsbutton:hover, #achievementsbutton.blink:hover {background-position:-474px -51px;}
-        #achievementsbutton.blink {background-position:-864px -51px;}
-        #achievementsbutton.active {background-position:-516px -51px;}
-        #helpbutton {background-position:-558px -51px;top:3px;left:1350px;}
-        #helpbutton:hover {background-position:-600px -51px;}
-        #helpbutton.active {background-position:-642px -51px;}
-        #mutebutton {background-position:-684px -51px;top:3px;left:1395px;}
-        #mutebutton:hover {background-position:-726px -51px;}
-        #mutebutton.active {background-position:-768px -51px;}
+        #chatbuttond {background-position:-306px -51px;top:3px;left:1260px;}
+        #chatbuttond:hover {background-position:-348px -51px;}
+        #chatbuttond.active {background-position:-390px -51px;}
+        #achievementsbuttond {background-position:-432px -51px;top:3px;left:1305px;}
+        #achievementsbuttond:hover, #achievementsbutton.blink:hover {background-position:-474px -51px;}
+        #achievementsbuttond.blink {background-position:-864px -51px;}
+        #achievementsbuttond.active {background-position:-516px -51px;}
+        #helpbuttond {background-position:-558px -51px;top:3px;left:1350px;}
+        #helpbuttond:hover {background-position:-600px -51px;}
+        #helpbuttond.active {background-position:-642px -51px;}
+        #mutebuttond {background-position:-684px -51px;top:3px;left:1395px;}
+        #mutebuttond:hover {background-position:-726px -51px;}
+        #mutebuttond.active {background-position:-768px -51px;}
         
         #chatbox {height:48px;width:1182px;background-size:1440px;background-position:0 -96px;margin-left:-591px;bottom:18px;}
         #chatbox.active {bottom:66px;}
@@ -578,14 +584,21 @@ footer, header, hgroup, menu, nav, section {
         #resize-check {height:3px;}
 	}
 
+    #achievementsbuttond {
+        background-position: -432px -51px;
+        top: 3px;
+        left: 1305px;
+    }
+    
+
 	@media screen and (max-width: 1500px) {
 
-	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
-	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #population {background-image:url('../img/2/barsheet.png');}
-	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background:url('../img/2/achievements.png');}
+	    .upsalded #logo, .upsalded #logosparks, .upsalded .left-ornament, .upsalded .right-ornament, .upsalded #character, .upsalded #character div, .upsalded .button, .upsalded .button div, .upsalded #respawn, .upsalded #scroll, .upsalded #instructions, .upsalded .icon, .upsalded #tilt, .upsalded .parchment-left, .upsalded .parchment-middle, .upsalded .parchment-right, .upsalded .avatar, .upsalded .facebook, .upsalded .twitter, .upsalded .close, .upsalded .ribbon .top, .upsalded .ribbon .bottom, .upsalded #about .img, .upsalded .ext-link {background-image:url('../img/2/spritesheet.png');}
+	    .upsalded #bar-container, .upsalded #healthbar, .upsalded .barbutton, .upsalded #chatbox, .upsalded #population {background-image:url('../img/2/barsheet.png');}
+	    .upsalded #achievements, .upsalded #achievements li, .upsalded .coin, .upsalded #achievement-notification, .upsalded #coinsparks, .upsalded .achievement-sharing a, .upsalded #previous, .upsalded #next {background:url('../img/2/achievements.png');}
 
-        body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 256px;}        
-        body {background:-webkit-gradient(radial, center center, 240, center center, 800, from(rgba(0,0,0,0)), to(rgba(0,0,0,1))), url('../img/2/wood.png') repeat, #000; background-size:auto, 256px;}
+        body {background:-moz-radial-gradient(rgba(0,0,0,.5) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 256px;}        
+        body {background:-webkit-gradient(radial, center center, 240, center center, 800, from(rgba(0,0,0,0.5)), to(rgba(0,0,0,1))), url('../img/2/wood.png') repeat, #000; background-size:auto, 256px;}
         #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:844px auto;}
         #logo {height:84px;width:458px;position:absolute;top:10%;left:50%;margin-left:-229px;z-index:3;}
         #logosparks {width:458px;height:84px;z-index:4;-moz-animation:logo2 .8s steps(6, end) infinite;-webkit-animation:logo2 .8s steps(6, end) infinite;-o-animation:logo2 .8s steps(6, end) infinite;-ms-animation:logo2 .8s steps(6, end) infinite;}
@@ -656,7 +669,7 @@ footer, header, hgroup, menu, nav, section {
 		#bar-container {height:34px;top:-2px;background-size:960px;}
 
 		#healthbar {height:26px;background-position:0 -34px;width:204px;top:6px;background-size:960px;z-index:20;}
-		#hitpoints {width:0px;height:22px;top:8px;left:22px;z-index:10;position:absolute;}
+		#hitpoints {height:22px;top:8px;left:22px;z-index:10;position:absolute;}
 
         #armor, #weapon {width:32px;height:32px;position:absolute;background-size:192px;background-position:-64px;}
         #weapon {left:208px;top:2px;}
@@ -673,19 +686,20 @@ footer, header, hgroup, menu, nav, section {
         #instance-population {padding-top:12px;}
 
         .barbutton {background-size:960px;height:30px;width:28px;}
-        #chatbutton {background-position:-204px -34px;top:2px;left:840px;}
-        #chatbutton:hover {background-position:-232px -34px;}
-        #chatbutton.active {background-position:-260px -34px;}
-        #achievementsbutton {background-position:-288px -34px;top:2px;left:870px;}
-        #achievementsbutton:hover, #achievementsbutton.blink:hover {background-position:-316px -34px;}
-        #achievementsbutton.blink {background-position:-576px -34px;}
-        #achievementsbutton.active {background-position:-344px -34px;}
-        #helpbutton {background-position:-372px -34px;top:2px;left:900px;}
-        #helpbutton:hover {background-position:-400px -34px;}
-        #helpbutton.active {background-position:-428px -34px;}
-        #mutebutton {background-position:-456px -34px;top:2px;left:930px;}
-        #mutebutton:hover {background-position:-484px -34px;}
-        #mutebutton.active {background-position:-512px -34px;}
+        #chatbuttond {background-position:-204px -34px;top:2px;left:840px;}
+        #chatbuttond:hover {background-position:-232px -34px;}
+        #chatbuttond.active {background-position:-260px -34px;}
+        #achievementsdbutton {background-position:-288px -34px;top:2px;left:870px;}
+        #achievementsbuttond:hover, #achievementsbutton.blink:hover {background-position:-316px -34px;}
+        #achievementsbuttond.blink {background-position:-576px -34px;}
+        #achievementsbuttond.active {background-position:-344px -34px;}
+        #achievementsbuttond {background-position:-288px -34px;top:2px;left:870px;}
+        #helpbuttond {background-position:-372px -34px;top:2px;left:900px;}
+        #helpbuttond:hover {background-position:-400px -34px;}
+        #helpbuttond.active {background-position:-428px -34px;}
+        #mutebuttond {background-position:-456px -34px;top:2px;left:930px;}
+        #mutebuttond:hover {background-position:-484px -34px;}
+        #mutebuttond.active {background-position:-512px -34px;}
 
 		#chatbox {height:32px;width:788px;background-size:960px;background-position:0 -64px;margin-left:-394px;bottom:12px;}
 		#chatbox.active {bottom:44px;}
@@ -741,12 +755,12 @@ footer, header, hgroup, menu, nav, section {
 	
 	@media screen and (max-height: 870px) {
 
-	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
-	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #population {background-image:url('../img/2/barsheet.png');}
-	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background:url('../img/2/achievements.png');}
+	    .upsalded #logo, .upsalded #logosparks, .upsalded .left-ornament, .upsalded .right-ornament, .upsalded #character, .upsalded #character div, .upsalded .button, .upsalded .button div, .upsalded #respawn, .upsalded #scroll, .upsalded #instructions, .upsalded .icon, .upsalded #tilt, .upsalded .parchment-left, .upsalded .parchment-middle, .upsalded .parchment-right, .upsalded .avatar, .upsalded .facebook, .upsalded .twitter, .upsalded .close, .upsalded .ribbon .top, .upsalded .ribbon .bottom, .upsalded #about .img, .upsalded .ext-link {background-image:url('../img/2/spritesheet.png');}
+	    .upsalded #bar-container, .upsalded #healthbar, .upsalded .barbutton, .upsalded #chatbox, .upsalded #population {background-image:url('../img/2/barsheet.png');}
+	    .upsalded #achievements, .upsalded #achievements li, .upsalded .coin, .upsalded #achievement-notification, .upsalded #coinsparks, .upsalded .achievement-sharing a, .upsalded #previous, .upsalded #next {background:url('../img/2/achievements.png');}
 
-        body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 256px;}        
-        body {background:-webkit-gradient(radial, center center, 240, center center, 800, from(rgba(0,0,0,0)), to(rgba(0,0,0,1))), url('../img/2/wood.png') repeat, #000; background-size:auto, 256px;}
+        body {background:-moz-radial-gradient(rgba(0,0,0,0.5) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 256px;}        
+        body {background:-webkit-gradient(radial, center center, 240, center center, 800, from(rgba(0,0,0,0.5)), to(rgba(0,0,0,1))), url('../img/2/wood.png') repeat, #000; background-size:auto, 256px;}
         #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:844px auto;}
         #logo {height:84px;width:458px;position:absolute;top:10%;left:50%;margin-left:-229px;z-index:3;}
         #logosparks {width:458px;height:84px;z-index:4;-moz-animation:logo2 .8s steps(6, end) infinite;-webkit-animation:logo2 .8s steps(6, end) infinite;-o-animation:logo2 .8s steps(6, end) infinite;-ms-animation:logo2 .8s steps(6, end) infinite;}
@@ -817,7 +831,7 @@ footer, header, hgroup, menu, nav, section {
 		#bar-container {height:34px;top:-2px;background-size:960px;}
 
 		#healthbar {height:26px;background-position:0 -34px;width:204px;top:6px;background-size:960px;z-index:20;}
-		#hitpoints {width:0px;height:22px;top:8px;left:22px;z-index:10;position:absolute;}
+		#hitpoints {height:22px;top:8px;left:22px;z-index:10;position:absolute;}
 
         #armor, #weapon {width:32px;height:32px;position:absolute;background-size:192px;background-position:-64px;}
         #weapon {left:208px;top:2px;}
@@ -834,19 +848,20 @@ footer, header, hgroup, menu, nav, section {
         #instance-population {padding-top:12px;}
 
         .barbutton {background-size:960px;height:30px;width:28px;}
-        #chatbutton {background-position:-204px -34px;top:2px;left:840px;}
-        #chatbutton:hover {background-position:-232px -34px;}
-        #chatbutton.active {background-position:-260px -34px;}
-        #achievementsbutton {background-position:-288px -34px;top:2px;left:870px;}
-        #achievementsbutton:hover, #achievementsbutton.blink:hover {background-position:-316px -34px;}
-        #achievementsbutton.blink {background-position:-576px -34px;}
-        #achievementsbutton.active {background-position:-344px -34px;}
-        #helpbutton {background-position:-372px -34px;top:2px;left:900px;}
-        #helpbutton:hover {background-position:-400px -34px;}
-        #helpbutton.active {background-position:-428px -34px;}
-        #mutebutton {background-position:-456px -34px;top:2px;left:930px;}
-        #mutebutton:hover {background-position:-484px -34px;}
-        #mutebutton.active {background-position:-512px -34px;}
+        #chatbuttond {background-position:-204px -34px;top:2px;left:840px;}
+        #chatbuttond:hover {background-position:-232px -34px;}
+        #chatbuttond.active {background-position:-260px -34px;}
+        #achievementsbuttond {background-position:-288px -34px;top:2px;left:870px;}
+        #achievementsbuttond:hover, #achievementsbutton.blink:hover {background-position:-316px -34px;}
+        #achievementsbuttond.blink {background-position:-576px -34px;}
+        #achievementsbuttond.active {background-position:-344px -34px;}
+        
+        #helpbuttond {background-position:-372px -34px;top:2px;left:900px;}
+        #helpbuttond:hover {background-position:-400px -34px;}
+        #helpbuttond.active {background-position:-428px -34px;}
+        #mutebuttond {background-position:-456px -34px;top:2px;left:930px;}
+        #mutebuttond:hover {background-position:-484px -34px;}
+        #mutebuttond.active {background-position:-512px -34px;}
 
 		#chatbox {height:32px;width:788px;background-size:960px;background-position:0 -64px;margin-left:-394px;bottom:12px;}
 		#chatbox.active {bottom:44px;}
@@ -902,8 +917,8 @@ footer, header, hgroup, menu, nav, section {
 	@media screen and (max-width: 1000px) {
 
         canvas {image-rendering:optimizeSpeed;}
-        body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
-        body {background:-webkit-gradient(radial, center center, 200, center center, 600, from(rgba(0,0,0,0)), to(rgba(0,0,0,1))), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
+        body {background:-moz-radial-gradient(rgba(0,0,0,0.5) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
+        body {background:-webkit-gradient(radial, center center, 200, center center, 600, from(rgba(0,0,0,0.5)), to(rgba(0,0,0,1))), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
         #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:422px auto;}
         #logo {height:42px;width:229px;position:absolute;top:10%;left:50%;margin-left:-114px;z-index:3;}
         #logosparks {width:229px;height:42px;z-index:4;-moz-animation:logo1 .8s steps(6, end) infinite;-webkit-animation:logo1 .8s steps(6, end) infinite;-o-animation:logo1 .8s steps(6, end) infinite;-ms-animation:logo1 .8s steps(6, end) infinite;}
@@ -945,7 +960,9 @@ footer, header, hgroup, menu, nav, section {
         #instructions li:nth-child(3) span {height:21px;width:16px;background-position:-406px -12px; display:block;float:left;margin: 0 9px 0 20px;position: relative;top: -6px;}
         #instructions p {text-align:center;font-family:'GraphicPixel';font-size:10px;clear:left;margin:0;}
 
-        #foreground { cursor: default; }
+        #foreground { 
+            cursor: default;
+        }
         
         #playerimage {height: 32px; width: 32px;}
         
@@ -976,7 +993,7 @@ footer, header, hgroup, menu, nav, section {
 	    #bar-container {height:17px;top:-1px;background-size:480px;}
 
 		#healthbar {height:13px;background-position:0 -17px;width:102px;top:3px;background-size:480px;z-index:20;}
-		#hitpoints {width:0px;height:11px;top:4px;left:11px;z-index:10;position:absolute;}
+		#hitpoints {height:11px;top:4px;left:11px;z-index:10;position:absolute;}
 
         #armor, #weapon {width:16px;height:16px;position:absolute;background-size:96px;background-position:-32px;}
         #weapon {left:104px;top:1px;}
@@ -992,19 +1009,19 @@ footer, header, hgroup, menu, nav, section {
         #instance-population {padding-top:5px;}
 
         .barbutton {background-size:480px;height:15px;width:14px;}
-        #chatbutton {background-position:-102px -17px;top:1px;left:420px;}
-        #chatbutton:hover {background-position:-116px -17px;}
-        #chatbutton.active {background-position:-130px -17px;}
-        #achievementsbutton {background-position:-144px -17px;top:1px;left:435px;}
-        #achievementsbutton:hover, #achievementsbutton.blink:hover {background-position:-158px -17px;}
-        #achievementsbutton.blink {background-position:-288px -17px;}
-        #achievementsbutton.active {background-position:-172px -17px;}
-        #helpbutton {background-position:-186px -17px;top:1px;left:450px;}
-        #helpbutton:hover {background-position:-200px -17px;}
-        #helpbutton.active {background-position:-214px -17px;}
-        #mutebutton {background-position:-228px -17px;top:1px;left:465px;}
-        #mutebutton:hover {background-position:-242px -17px;}
-        #mutebutton.active {background-position:-256px -17px;}
+        #chatbuttond {background-position:-102px -17px;top:1px;left:420px;}
+        #chatbuttond:hover {background-position:-116px -17px;}
+        #chatbuttond.active {background-position:-130px -17px;}
+        #achievementsbuttond {background-position:-144px -17px;top:1px;left:435px;}
+        #achievementsbuttond:hover, #achievementsbutton.blink:hover {background-position:-158px -17px;}
+        #achievementsbuttond.blink {background-position:-288px -17px;}
+        #achievementsbuttond.active {background-position:-172px -17px;}
+        #helpbuttond {background-position:-186px -17px;top:1px;left:450px;}
+        #helpbuttond:hover {background-position:-200px -17px;}
+        #helpbuttond.active {background-position:-214px -17px;}
+        #mutebuttond {background-position:-228px -17px;top:1px;left:465px;}
+        #mutebuttond:hover {background-position:-242px -17px;}
+        #mutebuttond.active {background-position:-256px -17px;}
 
 		#chatbox {height:16px;width:394px;background-size:480px;background-position:0 -32px;margin-left:-197px;bottom:6px;}
 		#chatbox.active {bottom:22px;}
@@ -1034,16 +1051,12 @@ footer, header, hgroup, menu, nav, section {
         #note {float:left;background-position:-401px -112px;height:11px;width:10px;}
         #close-credits {margin:12px auto 0 auto;text-align:center;clear:both;font-size:10px;}
         #sharing {width:202px;}
-        
-        /*About*/
         #about h1 span.title {max-width:400px;display:inline-block;line-height:24px;margin-top:-30px;position:relative;margin-bottom:-10px;}
         #close-about {margin:77px auto 0 auto;text-align:center;clear:both;font-size:10px;color:#373737;}
         #about #game-desc {font-size:10px;text-align:center;max-width:70%;margin:10px auto;line-height:14px;}
         #about .left p, #about .right p {font-size:9px;text-align:left;line-height:10px;padding:0;margin-top:-6px;}
         #about .left {width:37%;float:left;margin-left:10%;}
         #about .right {width:37%;float:right;margin-right:12%;}
-/*        #about .left .img {height:30px;width:27px;float:left;background-position:-354px -172px;margin-right:7px;}
-        #about .right .img {height:30px;width:56px;float:left;background-position:-354px -142px;margin-right:7px;}*/
         #about .img {display:none;}
         #about .link {clear:both;font-size:9px;margin:10px 0;display:block;text-align:left;line-height:5px;}
         #about .link a {color:#2e7fdd;text-decoration:none;}
@@ -1075,9 +1088,8 @@ footer, header, hgroup, menu, nav, section {
         
         canvas {image-rendering:optimizeSpeed;}
         #moztab {display:none;}
-        body.intro {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
-        body.intro {background:-webkit-gradient(radial, center center, 120, center center, 400, from(rgba(0,0,0,0)), to(rgba(0,0,0,1))), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
-        body {background:#000;}
+        body.intro {background:-moz-radial-gradient(rgba(0,0,0,0.5) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
+        body.intro {background:-webkit-gradient(radial, center center, 120, center center, 400, from(rgba(0,0,0,0.5)), to(rgba(0,0,0,1))), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
         #logosparks {-moz-animation:none;-webkit-animation:none;-o-animation:none;-ms-animation:none;display:none;}
 		#container {height:258px;width:480px;position:relative;left:50%;top:50%;margin:-128px auto 0 -240px;}
 		#canvasborder {background:none;padding:0;}
@@ -1109,7 +1121,7 @@ footer, header, hgroup, menu, nav, section {
         #instructions li:nth-child(3) span {height:21px;width:16px;background-position:-406px -12px; display:block;float:left;margin: 0 9px 0 20px;position: relative;top: -6px;}
         #instructions p {text-align:center;font-family:'GraphicPixel';font-size:10px;clear:left;margin:0;}
 		
-		#foreground { cursor: default; }
+		#foreground { cursor: default;}
 		
 		#parchment.animate {-moz-animation:none;-webkit-animation:none;-o-animation:none;-webkit-animation:none;}
 		
@@ -1136,7 +1148,7 @@ footer, header, hgroup, menu, nav, section {
 		#bar-container {height:34px;top:-2px;background-size:960px;background-position:0 -96px;}
 
 		#healthbar {height:26px;background-position:0 -34px;width:204px;top:6px;background-size:960px;z-index:20;}
-		#hitpoints {width:0px;height:22px;top:8px;left:22px;z-index:10;position:absolute;}
+		#hitpoints {height:22px;top:8px;left:22px;z-index:10;position:absolute;}
 
         #armor, #weapon {width:32px;height:32px;position:absolute;background-size:192px;background-position:-64px;}
         #weapon {left:208px;top:2px;}
@@ -1149,25 +1161,26 @@ footer, header, hgroup, menu, nav, section {
         #playercount span.count {display:inline;}
 
         .barbutton {background-size:960px;height:30px;width:28px;}
-        #chatbutton {background-position:-204px -34px;top:2px;left:360px;}
-        #chatbutton:hover {background-position:-232px -34px;}
-        #chatbutton.active {background-position:-260px -34px;}
-        #achievementsbutton {background-position:-288px -34px;top:2px;left:390px;}
-        #achievementsbutton:hover, #achievementsbutton.blink {background-position:-316px -34px;}
-        #achievementsbutton.active {background-position:-344px -34px;}
-        #helpbutton {background-position:-372px -34px;top:2px;left:420px;}
-        #helpbutton:hover {background-position:-400px -34px;}
-        #helpbutton.active {background-position:-428px -34px;}
-        #mutebutton {background-position:-456px -34px;top:2px;left:450px;}
-        #mutebutton:hover {background-position:-484px -34px;}
-        #mutebutton.active {background-position:-512px -34px;}
+        #chatbuttond {background-position:-204px -34px;top:2px;left:360px;}
+        #chatbuttond:hover {background-position:-232px -34px;}
+        #chatbuttond.active {background-position:-260px -34px;}
+        #achievementsbuttond {background-position:-288px -34px;top:2px;left:390px;}
+        #achievementsbuttond:hover, #achievementsbutton.blink {background-position:-316px -34px;}
+        #achievementsbuttond.active {background-position:-344px -34px;}
+       
+        #helpbuttond {background-position:-372px -34px;top:2px;left:420px;}
+        #helpbuttond:hover {background-position:-400px -34px;}
+        #helpbuttond.active {background-position:-428px -34px;}
+        #mutebuttond {background-position:-456px -34px;top:2px;left:450px;}
+        #mutebuttond:hover {background-position:-484px -34px;}
+        #mutebuttond.active {background-position:-512px -34px;}
 
 		#chatbox {height:32px;width:480px;background-size:960px;background-position:0 -64px;margin-left:-240px;bottom:2px;}
 		#chatbox.active {bottom:34px;}
 		#chatbox input {font-size:20px;color:#eee;background:none;width:90%;border:0;margin-left:2%;padding:0px 0;}
 		
 		/*Credits*/
-        .parchment-left, .upscaled .parchment-left, .parchment-middle, .upscaled .parchment-middle, .parchment-right, .upscaled .parchment-right {background:none;}
+        .parchment-left, .upsalded .parchment-left, .parchment-middle, .upsalded .parchment-middle, .parchment-right, .upsalded .parchment-right {background:none;}
         .parchment-left, .parchment-right {display:none;}
 		.parchment-middle {width:100%;left:0px;margin-left:0px;height:auto;position:relative;}
 		#toggle-credits, #credits {display:none;}
@@ -1230,3 +1243,28 @@ footer, header, hgroup, menu, nav, section {
     .opera #achievements.active, .opera #instructions.active { z-index: 30000;}
     .opera #coinsparks {display:none;}
     .opera #death, .opera #about, .opera #credits, .opera #error, .opera #confirmation, .opera #loadcharacter { z-index: -30000; }
+
+    .name{
+        display:block !important;
+    }
+    #hitpoints{
+        display:block !important;
+    }
+
+    #bubbles {
+        position: fixed !important;
+        top: 45% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        z-index: 1000 !important;
+        overflow: visible !important;
+    }
+    .bubble{
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        z-index: 1000 !important;
+        overflow: visible !important;
+    }
+    

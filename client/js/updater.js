@@ -1,4 +1,4 @@
-
+// updater.js
 define(['character', 'timer'], function(Character, Timer) {
 
     var Updater = Class.extend({
@@ -16,8 +16,52 @@ define(['character', 'timer'], function(Character, Timer) {
             this.updateAnimatedTiles();
             this.updateChatBubbles();
             this.updateInfos();
+            // Check if the joystick exists and call checkMove
+            //console.log(this.game.jscontrol.direction)
+            this.checkMove();
+            if (this.game.jscontrol.direction) {
+                this.checkMove();
+            }
         },
-
+        checkMove: function() {
+            var direction = this.game.jscontrol.direction;
+            var lastMoveTime = this.game.jscontrol.lastMoveTime;
+            var moveRate = this.game.jscontrol.moveRate;
+            if (direction !== "") {
+                // Check if enough time has passed since the last move
+                var currentTime = new Date().getTime();
+                if (currentTime - lastMoveTime > moveRate) {
+                    // Update the last move time
+                    this.game.jscontrol.lastMoveTime = currentTime;
+    
+                    // Send the move command to the game client.
+                    var playerX = this.game.player.gridX;
+                    var playerY = this.game.player.gridY;
+                    //console.log(direction);
+                    switch (direction) {
+                        case 'up':
+                            this.game.makePlayerGoTo(playerX, playerY - 1);
+                            this.game.jscontrol.constantY = null;  // Reset the constant Y
+                            break;
+                        case 'down':
+                            this.game.makePlayerGoTo(playerX, playerY + 1);
+                            this.game.jscontrol.constantY = null;  // Reset the constant Y
+                            break;
+                        case 'left':
+                            if (!this.game.jscontrol.constantY) {
+                                // If no constant Y has been set yet, set it now
+                                this.game.jscontrol.constantY = playerY;
+                            }
+                            this.game.makePlayerGoTo(playerX - 1, this.game.jscontrol.constantY);
+                            break;
+                        case 'right':
+                            this.game.makePlayerGoTo(playerX + 1, playerY);
+                            this.game.jscontrol.constantY = null;  // Reset the constant Y
+                            break;
+                    }
+                }
+            }
+        },
         updateCharacters: function() {
             var self = this;
         
@@ -193,6 +237,9 @@ define(['character', 'timer'], function(Character, Timer) {
                                      c.y + 16,
                                      c.moveSpeed);
                 }
+            }
+            if(!this.game.isDead){ // if player is alive
+                this.game.camera.lookAt(this.game.player);
             }
         },
 

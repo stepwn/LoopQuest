@@ -27,7 +27,10 @@ Types = {
         HP: 23,
         BLINK: 24,
         OPEN: 25,
-        CHECK: 26
+        CHECK: 26,
+        USE: 27,
+        SYNC_INVENTORY:68,
+        ATTACKDIRECTION:69
     },
     
     Entities: {
@@ -63,7 +66,8 @@ Types = {
         CHEST: 37,
         FIREPOTION: 38,
         CAKE: 39,
-        
+        MUSICBOX:67,
+
         // NPCs
         GUARD: 40,
         KING: 41,
@@ -89,7 +93,8 @@ Types = {
         GOLDENSWORD: 63,
         MORNINGSTAR: 64,
         AXE: 65,
-        BLUESWORD: 66
+        BLUESWORD: 66,
+        BOW: 70
     },
     
     Orientations: {
@@ -124,6 +129,7 @@ var kinds = {
     bluesword: [Types.Entities.BLUESWORD, "weapon"],
     goldensword: [Types.Entities.GOLDENSWORD, "weapon"],
     morningstar: [Types.Entities.MORNINGSTAR, "weapon"],
+    bow: [Types.Entities.BOW, "weapon"],
     
     firefox: [Types.Entities.FIREFOX, "armor"],
     clotharmor: [Types.Entities.CLOTHARMOR, "armor"],
@@ -138,6 +144,7 @@ var kinds = {
     burger: [Types.Entities.BURGER, "object"],
     chest: [Types.Entities.CHEST, "object"],
     firepotion: [Types.Entities.FIREPOTION, "object"],
+    musicbox: [Types.Entities.MUSICBOX, "object"],
 
     guard: [Types.Entities.GUARD, "npc"],
     villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
@@ -181,8 +188,14 @@ Types.rankedArmors = [
 ];
 
 Types.getWeaponRank = function(weaponKind) {
-    return _.indexOf(Types.rankedWeapons, weaponKind);
-};
+    console.log(weaponKind, Types.Entities.SWORD1);
+    if (Types.rankedWeapons.includes(weaponKind)) {
+      return _.indexOf(Types.rankedWeapons, weaponKind);
+    } else {
+      return false;
+    }
+  };
+  
 
 Types.getArmorRank = function(armorKind) {
     return _.indexOf(Types.rankedArmors, armorKind);

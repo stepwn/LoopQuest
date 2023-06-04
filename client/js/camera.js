@@ -13,14 +13,14 @@ define(function() {
         },
     
         rescale: function() {
-            var factor = this.renderer.mobile ? 1 : 2;
-        
+            //var factor = this.renderer.mobileC ? 1 : 2;
+            var factor = 2;
             this.gridW = 15 * factor;
             this.gridH = 7 * factor;
         
-            log.debug("---------");
-            log.debug("Factor:"+factor);
-            log.debug("W:"+this.gridW + " H:" + this.gridH);
+            console.log("---------");
+            console.log("Factor:"+factor);
+            console.log("W:"+this.gridW + " H:" + this.gridH);
         },
 
         setPosition: function(x, y) {
@@ -69,7 +69,7 @@ define(function() {
             }
         },
     
-        focusEntity: function(entity) {
+        focusEntity: function(entity){
             var w = this.gridW - 2,
                 h = this.gridH - 2,
                 x = Math.floor((entity.gridX - 1) / w) * w,

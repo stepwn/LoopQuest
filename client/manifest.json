@@ -1,0 +1,16 @@
+{
+    "name": "LoopQuest",
+    "short_name": "LQ",
+    "description": "LoopQuest, a Free NFT compatible MMO!",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#fff",
+    "theme_color": "#000",
+    "icons": [
+      {
+        "src": "../lq_icon",
+        "sizes": "192x192",
+        "type": "image/png"
+      }
+    ]
+  }

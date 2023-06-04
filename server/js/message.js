@@ -1,4 +1,6 @@
-
+//const bannedWords = require('./bannedwords.json');
+const Filter = require('bad-words');
+const filter = new Filter({ strict: true });
 var cls = require("./lib/class"),
     _ = require("underscore"),
     Utils = require("./utils"),
@@ -122,7 +124,8 @@ Messages.Drop = Message.extend({
 Messages.Chat = Message.extend({
     init: function(player, message) {
         this.playerId = player.id;
-        this.message = message;
+        this.message = filter.clean(message); // Returns 'This is a *******.' with the profane word replaced by asterisks
+
     },
     serialize: function() {
         return [Types.Messages.CHAT,
@@ -208,3 +211,13 @@ Messages.Blink = Message.extend({
                 this.item.id];
     }
 });
+
+Messages.SyncInventory = Message.extend({
+    init: function(inventoryData) {
+        this.inventoryData = inventoryData;
+    },
+    serialize: function() {
+        return [Types.Messages.SYNC_INVENTORY, this.inventoryData];
+    }
+});
+

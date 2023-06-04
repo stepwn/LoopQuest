@@ -1,14 +1,33 @@
 {
-    "name": "BrowserQuest"
-  , "version": "0.0.1"
-  , "private": false 
-  , "dependencies": {
-    "underscore": ">0"
-    , "log": ">0"
-    , "bison": ">0"
-    , "websocket": ">0"
-    , "websocket-server": ">0"
-    , "sanitizer": ">0"
-    , "memcache": ">0"
-  }
+    "name": "LoopQuest",
+    "version": "0.0.1",
+    "private": false,
+    "dependencies": {
+        "axios": "^1.4.0",
+        "bad-words": "^3.0.4",
+        "bison": "",
+        "body-parser": "^1.20.2",
+        "child_process": "^1.0.2",
+        "connect-sqlite3": "^0.9.13",
+        "cookie-parser": "^1.4.6",
+        "express": "^4.18.2",
+        "express-session": "^1.17.3",
+        "javascript-obfuscator": "^4.0.2",
+        "js-obfuscator": "^0.1.4",
+        "jsonwebtoken": "^9.0.0",
+        "log": "^6.3.1",
+        "mysql2": "^3.3.1",
+        "sanitizer": "",
+        "sequelize": "^6.31.1",
+        "source-map": "^0.7.4",
+        "source-map-support": "^0.5.21",
+        "sqlite3": "^5.1.6",
+        "terser": "^5.17.4",
+        "uglify-js": "^3.17.4",
+        "underscore": "",
+        "util": "^0.12.5",
+        "websocket": "",
+        "ws": "",
+        "xml2js": "^0.5.0"
+    }
 }

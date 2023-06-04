@@ -18,36 +18,39 @@ var _ = require('underscore'),
             this.formats[Types.Messages.TELEPORT] = ['n', 'n'],
             this.formats[Types.Messages.ZONE] = [],
             this.formats[Types.Messages.OPEN] = ['n'],
-            this.formats[Types.Messages.CHECK] = ['n']
+            this.formats[Types.Messages.CHECK] = ['n'],
+            this.formats[Types.Messages.USE] = ['n','n'],
+            this.formats[Types.Messages.ATTACKDIRECTION] = ['s'],
+            this.formats[Types.Messages.SYNC_INVENTORY] = ['array'];
         },
         
         check: function(msg) {
-            var message = msg.slice(0),
-                type = message[0],
+            //console.log(typeof msg);
+            var message = msg;
+               // console.log("format.js");
+                //console.log(message);
+                //console.log(message[0]);
+                var type = message[0],
                 format = this.formats[type];
-            
-            message.shift();
+                //console.log(format);
+                //message.shift();
+                var restOfMessage = message.slice(1);
+               // console.log(restOfMessage);
+                //console.log("/format.js");
             
             if(format) {    
-                if(message.length !== format.length) {
-                    return false;
-                }
-                for(var i = 0, n = message.length; i < n; i += 1) {
-                    if(format[i] === 'n' && !_.isNumber(message[i])) {
-                        return false;
-                    }
-                    if(format[i] === 's' && !_.isString(message[i])) {
-                        return false;
-                    }
-                }
+               // console.log('format.js returning true');
                 return true;
             }
             else if(type === Types.Messages.WHO) {
                 // WHO messages have a variable amount of params, all of which must be numbers.
                 return message.length > 0 && _.all(message, function(param) { return _.isNumber(param) });
             }
+            else if (type === Types.Messages.SYNC_INVENTORY) {
+                return _.isArray(restOfMessage[0]);
+            }
             else {
-                log.error("Unknown message type: "+type);
+                console.log("format.js Unknown message type: "+type);
                 return false;
             }
         }

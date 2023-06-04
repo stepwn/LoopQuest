@@ -16,8 +16,11 @@ define(['jquery', 'storage'], function($, Storage) {
         
         setGame: function(game) {
             this.game = game;
+            window.game = game;
             this.isMobile = this.game.renderer.mobile;
+            //this.isMobile = false;
             this.isTablet = this.game.renderer.tablet;
+            //this.isTablet = false;
             this.isDesktop = !(this.isMobile || this.isTablet);
             this.supportsWorkers = !!window.Worker;
             this.ready = true;
@@ -47,7 +50,7 @@ define(['jquery', 'storage'], function($, Storage) {
                     }
                     this.$playDiv.unbind('click');
                     var watchCanStart = setInterval(function() {
-                        log.debug("waiting...");
+                        console.log("waiting...");
                         if(self.canStartGame()) {
                             setTimeout(function() {
                                 if(!self.isMobile) {
@@ -55,11 +58,13 @@ define(['jquery', 'storage'], function($, Storage) {
                                 }
                             }, 1500);
                             clearInterval(watchCanStart);
+                            document.getElementById('lq_logo').style.display="none";
                             self.startGame(username, starting_callback);
                         }
                     }, 100);
                 } else {
                     this.$playDiv.unbind('click');
+                    document.getElementById('lq_logo').style.display="none";
                     this.startGame(username, starting_callback);
                 }      
             }
@@ -67,6 +72,21 @@ define(['jquery', 'storage'], function($, Storage) {
         
         startGame: function(username, starting_callback) {
             var self = this;
+
+            // Create a new image element
+            var loadingImage = document.createElement('img');
+
+            // Set the source of the image
+            loadingImage.src = '../img/common/loading.png';
+
+            // Apply styles to center the image in the viewport
+            loadingImage.style.position = 'fixed';
+            loadingImage.style.top = '50%';
+            loadingImage.style.left = '50%';
+            loadingImage.style.transform = 'translate(-50%, -50%)';
+
+            // Append the image to the body of the document
+            document.body.appendChild(loadingImage);
             
             if(starting_callback) {
                 starting_callback();
@@ -91,10 +111,10 @@ define(['jquery', 'storage'], function($, Storage) {
 
                 //>>includeStart("devHost", pragmas.devHost);
                 if(config.local) {
-                    log.debug("Starting game with local dev config.");
+                    console.log("Starting game with local dev config.");
                     this.game.setServerOptions(config.local.host, config.local.port, username);
                 } else {
-                    log.debug("Starting game with default dev config.");
+                    console.log("Starting game with default dev config.");
                     this.game.setServerOptions(config.dev.host, config.dev.port, username);
                 }
                 optionsSet = true;
@@ -102,13 +122,36 @@ define(['jquery', 'storage'], function($, Storage) {
                 
                 //>>includeStart("prodHost", pragmas.prodHost);
                 if(!optionsSet) {
-                    log.debug("Starting game with build config.");
+                    console.log("Starting game with build config.");
                     this.game.setServerOptions(config.build.host, config.build.port, username);
                 }
                 //>>includeEnd("prodHost");
 
                 this.center();
                 this.game.run(function() {
+                    var joystick = document.getElementById("dpad-walk");
+                    joystick.style.display = 'block';
+                    joystick.style.position = 'absolute';
+                    joystick.style.left = '1vw'; // 10% from the left side of the viewport
+                    joystick.style.bottom = '10vh'; // 10% from the bottom of the viewport
+                    //var rect = joystick.getBoundingClientRect();
+                    //window.jscontrol.originalX = rect.left;
+                    //window.jscontrol.originalY = rect.top;
+                    //var dpad = document.getElementById("dpad");
+                    //dpad.style.display = 'block';
+                    //dpad.style.position = 'absolute';
+                    //dpad.style.right = '3vw'; // 10% from the right side of the viewport
+                    //dpad.style.bottom = '10vh'; // 10% from the bottom of the viewport
+                    
+                    // set gui
+                    // if body has upscaled class
+                    var inv = document.getElementById('inventorybutton');
+                    //inv.style.backgroundImage = "url(../img/new/invbutton.png)";
+                    //inv.style.backgroundPosition = "-851px -145px";
+                    //inv.style.bottom = "5vw";
+                    //inv.style.right = "0px";
+                    // endif
+
                     $('body').addClass('started');
                 	if(firstTimePlaying) {
                 	    self.toggleInstructions();
@@ -118,35 +161,27 @@ define(['jquery', 'storage'], function($, Storage) {
         },
 
         setMouseCoordinates: function(event) {
-            var gamePos = $('#container').offset(),
-                scale = this.game.renderer.getScaleFactor(),
-                width = this.game.renderer.getWidth(),
-                height = this.game.renderer.getHeight(),
-                mouse = this.game.mouse;
+            var mouse = this.game.mouse;
+            var bc = document.getElementById("canvas");
+            var scalex = this.game.renderer.scaleFactorX,
+            scaley = this.game.renderer.scaleFactorY;
+            // Dividing by the scale factor to get the right coordinates
+            //console.log(event);
+            mouse.x = (event.pageX-bc.getBoundingClientRect().x)/scalex;
+            mouse.y = (event.pageY-bc.getBoundingClientRect().y)/scaley;
+            
 
-            mouse.x = event.pageX - gamePos.left - (this.isMobile ? 0 : 5 * scale);
-        	mouse.y = event.pageY - gamePos.top - (this.isMobile ? 0 : 7 * scale);
+        	
 
-        	if(mouse.x <= 0) {
-        	    mouse.x = 0;
-        	} else if(mouse.x >= width) {
-        	    mouse.x = width - 1;
-        	}
-
-        	if(mouse.y <= 0) {
-        	    mouse.y = 0;
-        	} else if(mouse.y >= height) {
-        	    mouse.y = height - 1;
-        	}
+            //console.log(mouse.x,mouse.y);
         },
 
         initHealthBar: function() {
-            var scale = this.game.renderer.getScaleFactor(),
-                healthMaxWidth = $("#healthbar").width() - (12 * scale);
-
+                healthMaxWidth = document.getElementById("healthbar").clientWidth-12;
+                $("#hitpoints").css('width', healthMaxWidth-12 + "px");
         	this.game.onPlayerHealthChange(function(hp, maxHp) {
         	    var barWidth = Math.round((healthMaxWidth / maxHp) * (hp > 0 ? hp : 0));
-        	    $("#hitpoints").css('width', barWidth + "px");
+        	    $("#hitpoints").css('width', barWidth-12 + "px");
         	});
 
         	this.game.onPlayerHurt(this.blinkHealthBar.bind(this));
@@ -184,18 +219,21 @@ define(['jquery', 'storage'], function($, Storage) {
         },
 
         showChat: function() {
+            console.log('click');
             if(this.game.started) {
-                $('#chatbox').addClass('active');
+                document.getElementById("chatbox").style.display = "block";
+                //$('#chatbox').addClass('active');
                 $('#chatinput').focus();
-                $('#chatbutton').addClass('active');
+                //$('#chatbutton').addClass('active');
             }
         },
 
         hideChat: function() {
             if(this.game.started) {
-                $('#chatbox').removeClass('active');
+                document.getElementById("chatbox").style.display = "none";
+                //$('#chatbox').removeClass('active');
                 $('#chatinput').blur();
-                $('#chatbutton').removeClass('active');
+                //$('#chatbutton').removeClass('active');
             }
         },
 
@@ -232,18 +270,50 @@ define(['jquery', 'storage'], function($, Storage) {
         initEquipmentIcons: function() {
             var scale = this.game.renderer.getScaleFactor();
             var getIconPath = function(spriteName) {
-                    return 'img/'+ scale +'/item-' + spriteName + '.png';
-                },
-                weapon = this.game.player.getWeaponName(),
-                armor = this.game.player.getSpriteName(),
-                weaponPath = getIconPath(weapon),
-                armorPath = getIconPath(armor);
-
-            $('#weapon').css('background-image', 'url("' + weaponPath + '")');
-            if(armor !== 'firefox') {
-                $('#armor').css('background-image', 'url("' + armorPath + '")');
+              return 'img/'+ scale +'/item-' + spriteName + '.png';
+            };
+          
+            var weapon = this.game.player.getWeaponName();
+            var armor = this.game.player.getSpriteName();
+          
+            var weaponPath = getIconPath(weapon);
+            var armorPath = getIconPath(armor);
+          
+            console.log(weaponPath);
+          
+            // Set the weapon icon
+            var weaponImage = new Image();
+            weaponImage.src = weaponPath;
+            weaponImage.onload = function() {
+              var canvas = document.createElement('canvas');
+              canvas.width = 32;
+              canvas.height = 32;
+          
+              var ctx = canvas.getContext('2d');
+              ctx.drawImage(weaponImage, 0, 0, 32, 32, 0, 0, 32, 32);
+          
+              var weaponIconPath = canvas.toDataURL();
+              document.getElementById('weaponinventorybutton').src = weaponIconPath;
+            };
+          
+            // Set the armor icon if it is not 'firefox'
+            if (armor !== 'firefox') {
+              var armorImage = new Image();
+              armorImage.src = armorPath;
+              armorImage.onload = function() {
+                var canvas = document.createElement('canvas');
+                canvas.width = 32;
+                canvas.height = 32;
+          
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(armorImage, 0, 0, 32, 32, 0, 0, 32, 32);
+          
+                var armorIconPath = canvas.toDataURL();
+                document.getElementById('armorinventorybutton').src = armorIconPath;
+              };
             }
-        },
+          },
+          
 
         hideWindows: function() {
             if($('#achievements').hasClass('active')) {
@@ -259,6 +329,9 @@ define(['jquery', 'storage'], function($, Storage) {
         	}
         	if($('body').hasClass('about')) {
         	    this.closeInGameAbout();
+        	}
+            if($('body').hasClass('inventory')) {
+        	    this.closeInGameInventory();
         	}
         },
 
@@ -316,7 +389,7 @@ define(['jquery', 'storage'], function($, Storage) {
                 if(!achievement.hidden) {
                     self.setAchievementData($a, achievement.name, achievement.desc);
                 }
-                $a.find('.twitter').attr('href', 'http://twitter.com/share?url=http%3A%2F%2Fbrowserquest.mozilla.org&text=I%20unlocked%20the%20%27'+ achievement.name +'%27%20achievement%20on%20Mozilla%27s%20%23BrowserQuest%21&related=glecollinet:Creators%20of%20BrowserQuest%2Cwhatthefranck');
+                $a.find('.twitter').attr('href', 'http://twitter.com/share?url=https%3A%2F%2FLoopQuest.io&text=I%20unlocked%20the%20%27'+ achievement.name +'%27%20achievement%20on%20LoopQuest');
                 $a.show();
                 $a.find('a').click(function() {
                      var url = $(this).attr('href');
@@ -367,6 +440,10 @@ define(['jquery', 'storage'], function($, Storage) {
                     this.closeInGameAbout();
                     $('#helpbutton').removeClass('active');
                 }
+                if($('body').hasClass('inventory')) {
+                    this.closeInGameInventory();
+                    $('#helpbutton').removeClass('active');
+                }
             } else {
                 if(currentState !== 'animate') {
                     if(currentState === 'credits') {
@@ -407,6 +484,27 @@ define(['jquery', 'storage'], function($, Storage) {
             }
         },
 
+        toggleInventory: function() {
+            var currentState = $('#parchment').attr('class');
+            if (currentState === 'inventory') {
+                // Close inventory
+                this.closeInGameInventory();
+            } else {
+                // Open inventory
+                if (this.game.started) {
+                    //$('#parchment').removeClass().addClass('inventory');
+                    $('body').toggleClass('inventory');
+                    if (!this.game.player) {
+                        $('body').toggleClass('death');
+                    }
+                    if ($('body').hasClass('credits')) {
+                        this.closeInGameCredits();
+                    }
+                }
+            }
+        },
+        
+
         closeInGameCredits: function() {
             $('body').removeClass('credits');
             $('#parchment').removeClass('credits');
@@ -418,6 +516,14 @@ define(['jquery', 'storage'], function($, Storage) {
         closeInGameAbout: function() {
             $('body').removeClass('about');
             $('#parchment').removeClass('about');
+            if(!this.game.player) {
+                $('body').addClass('death');
+            }
+            $('#helpbutton').removeClass('active');
+        },
+        closeInGameInventory: function() {
+            $('body').removeClass('inventory');
+            $('#parchment').removeClass('inventory');
             if(!this.game.player) {
                 $('body').addClass('death');
             }
@@ -498,6 +604,9 @@ define(['jquery', 'storage'], function($, Storage) {
         },
 
         showMessage: function(message) {
+            if(this.game.renderer.isMobile){
+                this.showChatLog(message);
+            }
             var $wrapper = $('#notifications div'),
                 $message = $('#notifications #message2');
 
@@ -510,21 +619,31 @@ define(['jquery', 'storage'], function($, Storage) {
             this.messageTimer = setTimeout(function() {
                     $wrapper.addClass('top');
             }, 5000);
+            //console.log(message);
+            
         },
 
         resetMessageTimer: function() {
             clearTimeout(this.messageTimer);
         },
+
+        showChatLog: function(message) {
+            // Show the message in the chat log
+            window.ChatLog.showMessage(message);
+          
+            
+          },
+          
         
         resizeUi: function() {
             if(this.game) {
                 if(this.game.started) {
-                    this.game.resize();
+                    //this.game.resize();
                     this.initHealthBar();
                     this.game.updateBars();
                 } else {
-                    var newScale = this.game.renderer.getScaleFactor();
-                    this.game.renderer.rescale(newScale);
+                    //var newScale = this.game.renderer.getScaleFactor();
+                    //this.game.renderer.rescale(newScale);
                 }
             } 
         }

@@ -1,20 +1,24 @@
 
-define(['character', 'exceptions'], function(Character, Exceptions) {
+
+
+define(['character', 'exceptions','inventory','sprite'], function(Character, Exceptions,Inventory,Sprite) {
 
     var Player = Character.extend({
         MAX_LEVEL: 10,
     
         init: function(id, name, kind) {
             this._super(id, kind);
-        
+            this.isPlayer = true
             this.name = name;
-        
+            
+            this.Inventory = new Inventory(this);
             // Renderer
      		this.nameOffsetY = -10;
         
             // sprites
             this.spriteName = "clotharmor";
             this.weaponName = "sword1";
+            
         
             // modes
             this.isLootMoving = false;
@@ -30,26 +34,8 @@ define(['character', 'exceptions'], function(Character, Exceptions) {
                 } else {
                     currentArmorName = this.spriteName;
                 }
-
-                if(item.type === "armor") {
-                    rank = Types.getArmorRank(item.kind);
-                    currentRank = Types.getArmorRank(Types.getKindFromString(currentArmorName));
-                    msg = "You are wearing a better armor";
-                } else if(item.type === "weapon") {
-                    rank = Types.getWeaponRank(item.kind);
-                    currentRank = Types.getWeaponRank(Types.getKindFromString(this.weaponName));
-                    msg = "You are wielding a better weapon";
-                }
-
-                if(rank && currentRank) {
-                    if(rank === currentRank) {
-                        throw new Exceptions.LootException("You already have this "+item.type);
-                    } else if(rank <= currentRank) {
-                        throw new Exceptions.LootException(msg);
-                    }
-                }
             
-                log.info('Player '+this.id+' has looted '+item.id);
+                console.log('Player '+this.id+' has looted '+item.id);
                 if(Types.isArmor(item.kind) && this.invincible) {
                     this.stopInvincibility();
                 }
@@ -69,6 +55,7 @@ define(['character', 'exceptions'], function(Character, Exceptions) {
         },
     
         setSpriteName: function(name) {
+            console.log("setting sprite name", name);
             this.spriteName = name;
         },
         
@@ -132,6 +119,10 @@ define(['character', 'exceptions'], function(Character, Exceptions) {
                 }, 90);
             }
         },
+        switchSkin: function(skin){
+            this.skin = skin;
+            this.skinSprite = new Sprite(skin,2);
+        },
     
         switchArmor: function(newArmorSprite) {
             var count = 14, 
@@ -150,6 +141,7 @@ define(['character', 'exceptions'], function(Character, Exceptions) {
             
                 this.isSwitchingArmor = true;
                 self.setSprite(newArmorSprite);
+                console.log("setting armor");
                 self.setSpriteName(newArmorSprite.id);
                 var blanking = setInterval(function() {
                     self.setVisible(toggle());

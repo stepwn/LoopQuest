@@ -1,5 +1,5 @@
 
-define(function() {
+define(['sprite'],function(Sprite) {
 
     var Entity = Class.extend({
         init: function(id, kind) {
@@ -15,6 +15,7 @@ define(function() {
     		this.animations = null;
     		this.currentAnimation = null;
             this.shadowOffsetY = 0;
+
 		
     		// Position
     		this.setGridPosition(0, 0);
@@ -45,7 +46,8 @@ define(function() {
 	
     	setSprite: function(sprite) {
     	    if(!sprite) {
-    	        log.error(this.id + " : sprite is null", true);
+                console.log(sprite);
+    	        console.log(this.id + " : sprite is null", true);
     	        throw "Error";
     	    }
 	    
@@ -67,6 +69,9 @@ define(function() {
     			this.ready_func();
     		}
     	},
+        getIsMob: function(){
+            return Types.isMob(this.kind);
+        },
 	
     	getSprite: function() {
     	    return this.sprite;
@@ -83,7 +88,7 @@ define(function() {
                 animation = this.animations[name];
             }
             else {
-                log.error("No animation called "+ name);
+                console.log("No animation called "+ name);
             }
             return animation;
         },
@@ -114,7 +119,11 @@ define(function() {
     			this.log_error("Not ready for animation");
     		}
     	},
-	
+        switchSkin: function(skin){
+            this.skin = skin;
+            this.skinSprite = new Sprite(skin,2);
+            //this.spriteName = skin;
+        },
     	hasShadow: function() {
     	    return false;
     	},
@@ -128,11 +137,11 @@ define(function() {
     	},
 	
         log_info: function(message) {
-            log.info("["+this.id+"] " + message);
+            console.log("["+this.id+"] " + message);
         },
     
         log_error: function(message) {
-            log.error("["+this.id+"] " + message);
+            console.log("["+this.id+"] " + message);
         },
     
         setHighlight: function(value) {

@@ -13,14 +13,22 @@ define(['entity'], function(Entity) {
         hasShadow: function() {
             return true;
         },
-
-        onLoot: function(player) {
+        use: function(player){
+            window.client.sendUse(this);
             if(this.type === "weapon") {
                 player.switchWeapon(this.itemKind);
+                document.getElementById("weaponinventorybutton").src = this.sprite.b64icon;
             }
             else if(this.type === "armor") {
                 player.armorloot_callback(this.itemKind);
+                document.getElementById("armorinventorybutton").src = this.sprite.b64icon;
             }
+            else{
+                
+            }
+        },
+        onLoot: function(player) {
+            player.Inventory.addItem(this);
         },
 
         getSpriteName: function() {

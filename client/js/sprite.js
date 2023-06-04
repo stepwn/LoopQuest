@@ -8,10 +8,23 @@ define(['jquery', 'animation', 'sprites'], function($, Animation, sprites) {
         	this.isLoaded = false;
         	this.offsetX = 0;
         	this.offsetY = 0;
-            this.loadJSON(sprites[name]);
+			console.log(name);
+			if(this.loadJSON(sprites[name])){
+				console.log("loading normal sprite");
+				this.load();
+			}
+
+			else{
+				console.log('loading NFT skin ', this.name);
+				this.loadJSON(sprites["clotharmor"]);
+				this.id = this.name;
+				this.filepath = "img/2/"+this.id+".png";
+				this.load();
+			}
         },
         
         loadJSON: function(data) {
+			try{
     		this.id = data.id;
     		this.filepath = "img/" + this.scale + "/" + this.id + ".png";
     		this.animationData = data.animations;
@@ -19,24 +32,43 @@ define(['jquery', 'animation', 'sprites'], function($, Animation, sprites) {
     		this.height = data.height;
     		this.offsetX = (data.offset_x !== undefined) ? data.offset_x : -16;
             this.offsetY = (data.offset_y !== undefined) ? data.offset_y : -16;
-	
-    		this.load();
+			return true;
+    		//this.load();
+		}
+		catch(e){
+			console.log(e);
+			return false;
+		}
     	},
 
         load: function() {
-        	var self = this;
-
-        	this.image = new Image();
-        	this.image.src = this.filepath;
-
-        	this.image.onload = function() {
-        		self.isLoaded = true;
-    		    
-                if(self.onload_func) {
-                    self.onload_func();
-                }
-        	};
-        },
+			var self = this;
+		
+			this.image = new Image();
+			this.image.src = this.filepath;
+		
+			this.image.onload = function() {
+				self.isLoaded = true;
+		
+				// Create a canvas element with adjusted dimensions
+				var canvas = document.createElement('canvas');
+				canvas.width = self.width*2 ;
+				canvas.height = self.height*2 ;
+				var context = canvas.getContext('2d');
+		
+				// Draw the image with offsets
+				context.drawImage(self.image, self.offsetX-self.width/2+6, self.offsetY-self.height/2+6);
+		
+				// Convert the canvas content to base64
+				self.b64icon = canvas.toDataURL('image/png');
+		
+				if (self.onload_func) {
+					self.onload_func();
+				}
+			};
+		},
+		
+		
     
         createAnimations: function() {
             var animations = {};
@@ -82,7 +114,7 @@ define(['jquery', 'animation', 'sprites'], function($, Animation, sprites) {
             	    height: this.height
             	};
     	    } catch(e) {
-    	        log.error("Error getting image data for sprite : "+this.name);
+    	        console.log("Error getting image data for sprite : "+this.name);
     	    }
         },
 	

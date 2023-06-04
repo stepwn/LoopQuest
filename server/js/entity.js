@@ -10,6 +10,7 @@ module.exports = Entity = cls.Class.extend({
         this.kind = kind;
         this.x = x;
         this.y = y;
+        this.skin;
     },
     
     destroy: function() {
@@ -21,7 +22,7 @@ module.exports = Entity = cls.Class.extend({
             parseInt(this.id),
             this.kind,
             this.x,
-            this.y
+            this.y,
         ];
     },
     

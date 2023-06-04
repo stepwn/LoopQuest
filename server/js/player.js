@@ -1,4 +1,5 @@
-
+var fs = require('fs');
+var path = require('path');
 var cls = require("./lib/class"),
     _ = require("underscore"),
     Messages = require("./message"),
@@ -6,17 +7,51 @@ var cls = require("./lib/class"),
     Properties = require("./properties"),
     Formulas = require("./formulas"),
     check = require("./format").check,
-    Types = require("../../shared/js/gametypes");
+    Types = require("../../shared/js/gametypes"),
+    Item = require("./item.js"),
+    Inventory = require('./inventory.js');
 
-module.exports = Player = Character.extend({
-    init: function(connection, worldServer) {
+    module.exports = Player = Character.extend({
+        init: function(connection, worldServer,NFTs) {
+         console.log('Player created with NFTs:', NFTs);
+            
         var self = this;
-        
+        this.NFTs = NFTs;
         this.server = worldServer;
         this.connection = connection;
 
-        this._super(this.connection.id, "player", Types.Entities.WARRIOR, 0, 0, "");
-
+        this.id = connection._id;
+        console.log(this.id);
+        this._super(this.connection._id, "player", Types.Entities.WARRIOR, 0, 0, "");
+        this.inventory = new Inventory();
+        try{
+            this.nfts = this.connection._session.nfts;
+            // Load the integrated NFTs data
+            var integratedNFTsPath = path.join(__dirname, '..', '../shared', 'integratedNFTs.json');
+            var integratedNFTsData = fs.readFileSync(integratedNFTsPath, 'utf8');
+            var integratedNFTs = JSON.parse(integratedNFTsData);
+            // Iterate through the user's NFTs and add them to the inventory
+            for (var i = 0; i < this.nfts.length; i++) {
+                var nft = this.nfts[i];
+                var itemKind;
+                var nftData = integratedNFTs[nft];
+                console.log(nftData);
+                console.log(nftData.type);
+                // Determine the item kind based on the NFT data
+                if (nftData.type === 'music') {
+                    console.log("ismusic");
+                    itemKind = Types.Entities.MUSICBOX;
+                } else {
+                    // Handle other types of NFTs
+                }
+            
+                var item = new Item(nft, itemKind, 0, 0);
+                this.inventory.addItem(item);
+                console.log(this.inventory);
+            }
+        } catch(error){
+            console.log(error);
+        }
         this.hasEnteredGame = false;
         this.isDead = false;
         this.haters = {};
@@ -24,10 +59,15 @@ module.exports = Player = Character.extend({
         this.formatChecker = new FormatChecker();
         this.disconnectTimeout = null;
         
-        this.connection.listen(function(message) {
+        this.connection.onMessage(function(message) {
+            message = JSON.parse(message);
             var action = parseInt(message[0]);
+            if(!action){
+                action = message[0];
+            }
             
-            log.debug("Received: "+message);
+            //console.log("Received: "+message);
+            //console.log("Received: "+message);
             if(!check(message)) {
                 self.connection.close("Invalid "+Types.getMessageTypeAsString(action)+" message format: "+message);
                 return;
@@ -53,8 +93,11 @@ module.exports = Player = Character.extend({
                 self.name = (name === "") ? "lorem ipsum" : name.substr(0, 15);
                 
                 self.kind = Types.Entities.WARRIOR;
+                console.log(message[2]);
                 self.equipArmor(message[2]);
+                self.equipSkin(message[4]);
                 self.equipWeapon(message[3]);
+                console.log("equipping weapon ", message[3]);
                 self.orientation = Utils.randomOrientation();
                 self.updateHitPoints();
                 self.updatePosition();
@@ -63,12 +106,17 @@ module.exports = Player = Character.extend({
                 self.server.enter_callback(self);
 
                 self.send([Types.Messages.WELCOME, self.id, self.name, self.x, self.y, self.hitPoints]);
+                //self.send([Types.Messages.SYNC_INVENTORY, self.inventory]);
                 self.hasEnteredGame = true;
                 self.isDead = false;
             }
             else if(action === Types.Messages.WHO) {
-                message.shift();
-                self.server.pushSpawnsToPlayer(self, message);
+                if (Array.isArray(message)) {
+                    message.shift();
+                    self.server.pushSpawnsToPlayer(self, message);
+                } else {
+                    console.error('Expected message to be an array, got:', typeof message);
+                }
             }
             else if(action === Types.Messages.ZONE) {
                 self.zone_callback();
@@ -80,6 +128,13 @@ module.exports = Player = Character.extend({
                 if(msg && msg !== "") {
                     msg = msg.substr(0, 60); // Enforce maxlength of chat input
                     self.broadcastToZone(new Messages.Chat(self, msg), false);
+                    // Store the message, sender, and timestamp
+                    var chatLogEntry = {
+                        message: msg,
+                        sender: self.name, // Assuming `self.id` is the sender's identifier
+                        timestamp: new Date() // Current time in milliseconds since Unix epoch
+                    };
+                    self.server.chatLog.push(chatLogEntry);
                 }
             }
             else if(action === Types.Messages.MOVE) {
@@ -148,12 +203,42 @@ module.exports = Player = Character.extend({
                     }
                 }
             }
+            else if(action === "swapSkin") {
+                if(message[1] in self.NFTs){
+                    self.skin = message[1];
+                }
+            }
             else if(action === Types.Messages.LOOT) {
                 var item = self.server.getEntityById(message[1]);
                 
                 if(item) {
                     var kind = item.kind;
                     
+                    if(Types.isItem(kind)) {
+                        self.broadcast(item.despawn());
+                        //self.server.removeEntity(item);
+                        
+                       self.inventory.addItem(item);
+                    }
+                }
+            }
+            else if(action === Types.Messages.USE) {
+                var itemId = message[1];
+                var item = null;
+                
+                // Loop through the inventory to find the item
+                for (var i = 0; i < self.inventory.slots.length; i++) {
+                    if (self.inventory.slots[i].id === itemId) {
+                    item = self.inventory.slots[i];
+                    break;
+                    }
+                }
+                
+                if (item) {
+                    //console.log(item);
+                    var kind = item.kind;
+                    self.inventory.removeItem(item);
+                    //console.log('item used');
                     if(Types.isItem(kind)) {
                         self.broadcast(item.despawn());
                         self.server.removeEntity(item);
@@ -179,6 +264,7 @@ module.exports = Player = Character.extend({
                             }
                             
                             if(!self.hasFullHealth()) {
+                                
                                 self.regenHealthBy(amount);
                                 self.server.pushToPlayer(self, self.health());
                             }
@@ -202,6 +288,25 @@ module.exports = Player = Character.extend({
                     self.server.handlePlayerVanish(self);
                     self.server.pushRelevantEntityListTo(self);
                 }
+            }
+            else if(action === Types.Messages.ATTACKDIRECTION) {
+                var direction = message[1];
+                
+                // Get the coordinates of the grid cell in the direction of the attack
+                var targetX = player.x + direction.x;
+                var targetY = player.y + direction.y;
+                
+                // Get the entity at those coordinates
+                var targetEntity = self.getEntityAt(targetX, targetY);
+                
+                if(targetEntity && targetEntity instanceof Mob) {
+                    // If there's an entity in the attack direction and it's a Mob, attack it
+                    player.attack(targetEntity);
+                } else {
+                    // If there's no Mob in the direction of the attack, perform an empty attack
+                    player.attack(null);
+                }
+                
             }
             else if(action === Types.Messages.OPEN) {
                 var chest = self.server.getEntityById(message[1]);
@@ -252,15 +357,25 @@ module.exports = Player = Character.extend({
     getState: function() {
         var basestate = this._getBaseState(),
             state = [this.name, this.orientation, this.armor, this.weapon];
-
-        if(this.target) {
-            state.push(this.target);
-        }
-        
-        return basestate.concat(state);
+    
+        var extendedState = {
+            target: this.target,
+            skin: this.skin,
+            ENS: this.ENS
+        };
+    
+        console.log(basestate.concat(extendedState));
+        return {
+            state: basestate.concat(state),
+            stateobj: extendedState
+        };
     },
     
+    
+    
     send: function(message) {
+        //console.log(message);
+        //console.log(this.connection);
         this.connection.send(message);
     },
     
@@ -336,6 +451,12 @@ module.exports = Player = Character.extend({
         this.armor = kind;
         this.armorLevel = Properties.getArmorLevel(kind);
     },
+
+    equipSkin: function(skin) {
+        this.skin = skin;
+        console.log("euipped skin: ", this.skin);
+        //this.armorLevel = Properties.getArmorLevel(kind);
+    },
     
     equipWeapon: function(kind) {
         this.weapon = kind;
@@ -344,8 +465,8 @@ module.exports = Player = Character.extend({
     
     equipItem: function(item) {
         if(item) {
-            log.debug(this.name + " equips " + Types.getKindAsString(item.kind));
-            
+            //console.log(this.name + " equips " + Types.getKindAsString(item.kind));
+            console.log(this.name + " equips " + Types.getKindAsString(item.kind));
             if(Types.isArmor(item.kind)) {
                 this.equipArmor(item.kind);
                 this.updateHitPoints();

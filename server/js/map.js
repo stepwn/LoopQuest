@@ -12,9 +12,9 @@ module.exports = Map = cls.Class.extend({
     
     	this.isLoaded = false;
     
-    	path.exists(filepath, function(exists) {
+    	fs.exists(filepath, function(exists) {
             if(!exists) {
-                log.error(filepath + " doesn't exist.");
+                console.log(filepath + " doesn't exist.");
                 return;
             }
         
@@ -92,7 +92,7 @@ module.exports = Map = cls.Class.extend({
                     tileIndex += 1;
                 }
             }
-            //log.info("Collision grid generated.");
+            //console.log("Collision grid generated.");
         }
     },
 

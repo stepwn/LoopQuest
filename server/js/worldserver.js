@@ -1,4 +1,5 @@
 
+const { json } = require("body-parser");
 var cls = require("./lib/class"),
     _ = require("underscore"),
     Log = require('log'),
@@ -26,10 +27,22 @@ module.exports = World = cls.Class.extend({
         this.id = id;
         this.maxPlayers = maxPlayers;
         this.server = websocketServer;
+        //console.log(this.server);
         this.ups = 50;
         
         this.map = null;
+        this.chatLog = [];
+        setInterval(() => {
+            if (this.chatLog.length > 0) {
+                // Write the chatLog to the file
+                fs.appendFile('./chatLog.txt', JSON.stringify(this.chatLog) + '\n', (err) => {
+                    if (err) throw err;
+                });
         
+                // Clear the chatLog
+                this.chatLog = [];
+            }
+        }, 10000);
         this.entities = {};
         this.players = {};
         this.mobs = {};
@@ -46,7 +59,7 @@ module.exports = World = cls.Class.extend({
         
         this.itemCount = 0;
         this.playerCount = 0;
-        
+        this.ratKillCount = 0;
         this.zoneGroupsReady = false;
         
         this.onPlayerConnect(function(player) {
@@ -60,19 +73,30 @@ module.exports = World = cls.Class.extend({
         });
         
         this.onPlayerEnter(function(player) {
-            log.info(player.name + " has joined "+ self.id);
-            
+            console.log(player.name + " has joined "+ self.id);
+            self.chatLog.push([
+                player.name,
+                new Date(),
+                self.id
+            ]);
+            //var bow = this.createItem(Types.Entities.BOW, player.x, player.y);
+            //console.log(bow);
             if(!player.hasEnteredGame) {
                 self.incrementPlayerCount();
             }
-            
+            console.log(player.skin);
             // Number of players in this world
             self.pushToPlayer(player, new Messages.Population(self.playerCount));
             self.pushRelevantEntityListTo(player);
     
             var move_callback = function(x, y) {
-                log.debug(player.name + " is moving to (" + x + ", " + y + ").");
+                //console.log(player.name + " is moving to (" + x + ", " + y + ").");
+                var hasChangedGroups = self.handleEntityGroupMembership(player);
                 
+                if(hasChangedGroups) {
+                    self.pushToPreviousGroups(player, new Messages.Destroy(player));
+                    self.pushRelevantEntityListTo(player);
+                }
                 player.forEachAttacker(function(mob) {
                     var target = self.getEntityById(mob.target);
                     if(target) {
@@ -109,7 +133,7 @@ module.exports = World = cls.Class.extend({
             });
     
             player.onExit(function() {
-                log.info(player.name + " has left the game.");
+                console.log(player.name + " has left the game.");
                 self.removePlayer(player);
                 self.decrementPlayerCount();
                 
@@ -202,7 +226,8 @@ module.exports = World = cls.Class.extend({
             }
         }, 1000 / this.ups);
         
-        log.info(""+this.id+" created (capacity: "+this.maxPlayers+" players).");
+        //console.log(""+this.id+" created (capacity: "+this.maxPlayers+" players).");
+        console.log(""+this.id+" created (capacity: "+this.maxPlayers+" players).");
     },
     
     setUpdatesPerSecond: function(ups) {
@@ -256,14 +281,15 @@ module.exports = World = cls.Class.extend({
             }
         });
         
-        log.debug("Pushed "+_.size(ids)+" new spawns to "+player.id);
+        console.log("Pushed "+_.size(ids)+" new spawns to "+player.id);
     },
     
     pushToPlayer: function(player, message) {
+        //console.log(player);
         if(player && player.id in this.outgoingQueues) {
             this.outgoingQueues[player.id].push(message.serialize());
         } else {
-            log.error("pushToPlayer: player was undefined");
+            console.log("pushToPlayer: player was undefined");
         }
     },
     
@@ -278,7 +304,7 @@ module.exports = World = cls.Class.extend({
                 }
             });
         } else {
-            log.error("groupId: "+groupId+" is not a valid group");
+            console.log("groupId: "+groupId+" is not a valid group");
         }
     },
     
@@ -308,13 +334,14 @@ module.exports = World = cls.Class.extend({
         }
     },
     
-    processQueues: function() {
+    processQueues: function() {
         var self = this,
             connection;
-
+    
         for(var id in this.outgoingQueues) {
             if(this.outgoingQueues[id].length > 0) {
                 connection = this.server.getConnection(id);
+                //console.log("Sending data to client " + id + ": ", this.outgoingQueues[id]);
                 connection.send(this.outgoingQueues[id]);
                 this.outgoingQueues[id] = [];
             }
@@ -344,7 +371,7 @@ module.exports = World = cls.Class.extend({
         
         entity.destroy();
         this.removeFromGroups(entity);
-        log.debug("Removed "+ Types.getKindAsString(entity.kind) +" : "+ entity.id);
+        console.log("Removed "+ Types.getKindAsString(entity.kind) +" : "+ entity.id);
     },
     
     addPlayer: function(player) {
@@ -352,7 +379,7 @@ module.exports = World = cls.Class.extend({
         this.players[player.id] = player;
         this.outgoingQueues[player.id] = [];
         
-        //log.info("Added player : " + player.id);
+        //console.log("Added player : " + player.id);
     },
     
     removePlayer: function(player) {
@@ -488,7 +515,7 @@ module.exports = World = cls.Class.extend({
             mob.setTarget(player);
             
             this.broadcastAttacker(mob);
-            log.debug(mob.id + " is now attacking " + player.id);
+            console.log(mob.id + " is now attacking " + player.id);
         }
     },
     
@@ -500,7 +527,7 @@ module.exports = World = cls.Class.extend({
         if(id in this.entities) {
             return this.entities[id];
         } else {
-            log.error("Unknown entity : " + id);
+            console.log("Unknown entity : " + id);
         }
     },
     
@@ -515,7 +542,7 @@ module.exports = World = cls.Class.extend({
     },
     
     broadcastAttacker: function(character) {
-        if(character) {
+        if(character){
             this.pushToAdjacentGroups(character.group, character.attack(), character.id);
         }
         if(this.attack_callback) {
@@ -544,6 +571,12 @@ module.exports = World = cls.Class.extend({
 
                 this.pushToPlayer(attacker, new Messages.Kill(mob));
                 this.pushToAdjacentGroups(mob.group, mob.despawn()); // Despawn must be enqueued before the item drop
+                // Increase ratKillCount if the entity is a rat
+                if (Types.getKindAsString(mob.kind) === "rat") {
+                    // Assuming ratKillCount is a variable accessible in the current scope
+                    this.ratKillCount++;
+                    console.log(this.ratKillCount);
+                }
                 if(item) {
                     this.pushToAdjacentGroups(mob.group, mob.drop(item));
                     this.handleItemDespawn(item);
@@ -750,9 +783,9 @@ module.exports = World = cls.Class.extend({
     },
     
     logGroupPlayers: function(groupId) {
-        log.debug("Players inside group "+groupId+":");
+        console.log("Players inside group "+groupId+":");
         _.each(this.groups[groupId].players, function(id) {
-            log.debug("- player "+id);
+            console.log("- player "+id);
         });
     },
     
@@ -768,7 +801,7 @@ module.exports = World = cls.Class.extend({
                 
                 if(_.size(oldGroups) > 0) {
                     entity.recentlyLeftGroups = _.difference(oldGroups, newGroups);
-                    log.debug("group diff: " + entity.recentlyLeftGroups);
+                    console.log("group diff: " + entity.recentlyLeftGroups);
                 }
             }
         }

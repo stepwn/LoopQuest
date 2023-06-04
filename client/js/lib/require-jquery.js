@@ -5016,7 +5016,7 @@ jQuery.event = {
 				if ( ret !== undefined ) {
 					event.result = ret;
 					if ( ret === false ) {
-						event.preventDefault();
+						//event.preventDefault();
 						event.stopPropagation();
 					}
 				}

@@ -5,7 +5,7 @@ define(['mobs', 'items', 'npcs', 'warrior', 'chest'], function(Mobs, Items, NPCs
 
     EntityFactory.createEntity = function(kind, id, name) {
         if(!kind) {
-            log.error("kind is undefined", true);
+            console.log("kind is undefined", true);
             return;
         }
     
@@ -84,6 +84,11 @@ define(['mobs', 'items', 'npcs', 'warrior', 'chest'], function(Mobs, Items, NPCs
 
     EntityFactory.builders[Types.Entities.AXE] = function(id) {
         return new Items.Axe(id);
+    };
+    EntityFactory.builders[Types.Entities.BOW] = function(id) {
+        var bow = new Items.Bow(id);
+        console.log(bow)
+        return bow;
     };
 
     EntityFactory.builders[Types.Entities.REDSWORD] = function(id) {

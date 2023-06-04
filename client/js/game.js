@@ -4,26 +4,31 @@ define(['infomanager', 'bubble', 'renderer', 'map', 'animation', 'sprite', 'tile
         'item', 'mob', 'npc', 'player', 'character', 'chest', 'mobs', 'exceptions', 'config', '../../shared/js/gametypes'],
 function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedTile,
          Warrior, GameClient, AudioManager, Updater, Transition, Pathfinder,
-         Item, Mob, Npc, Player, Character, Chest, Mobs, Exceptions, config) {
+         Item, Mob, Npc, Player, Character, Chest, Mobs, Exceptions, config,gametypes) {
     
     var Game = Class.extend({
         init: function(app) {
+            this.gametypes = gametypes;
+            window.gametypes = this.gametypes;
             this.app = app;
             this.app.config = config;
             this.ready = false;
             this.started = false;
             this.hasNeverStarted = true;
-        
             this.renderer = null;
             this.updater = null;
             this.pathfinder = null;
             this.chatinput = null;
             this.bubbleManager = null;
             this.audioManager = null;
+            this.jscontrol = window.jscontrol;
+            window.game = this;
+            
         
             // Player
             this.player = new Warrior("player", "");
-    
+            window.player = this.player;
+            this.isDead = false;
             // Game state
             this.entities = {};
             this.deathpositions = {};
@@ -107,7 +112,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
             this.map = new Map(!this.renderer.upscaledRendering, this);
     
         	this.map.ready(function() {
-                log.info("Map loaded.");
+                console.log("Map loaded.");
                 var tilesetIndex = self.renderer.upscaledRendering ? 0 : self.renderer.scale - 1;
                 self.renderer.setTileset(self.map.tilesets[tilesetIndex]);
         	});
@@ -115,14 +120,25 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
     
         initPlayer: function() {
             if(this.storage.hasAlreadyPlayed()) {
+                console.log("has played");
                 this.player.setSpriteName(this.storage.data.player.armor);
                 this.player.setWeaponName(this.storage.data.player.weapon);
+                if(this.storage.data.player.skin !=""){
+                    this.player.switchSkin(this.storage.data.player.skin);
+                }
             }
-        
+            else{
+                if(window.skin != "" && window.skin != undefined){
+                    console.log("loading window skin ", window.skin);
+                    this.player.switchSkin(window.skin);
+                }
+            }
+            
         	this.player.setSprite(this.sprites[this.player.getSpriteName()]);
+            
         	this.player.idle();
         
-    	    log.debug("Finished initPlayer");
+    	    console.log("Finished initPlayer");
         },
 
         initShadows: function() {
@@ -320,9 +336,10 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 this.spritesets[0][name] = new Sprite(name, 1);
             } else {
                 this.spritesets[1][name] = new Sprite(name, 2);
-                if(!this.renderer.mobile && !this.renderer.tablet) {
-                    this.spritesets[2][name] = new Sprite(name, 3);
-                }
+                //if(!this.renderer.mobile && !this.renderer.tablet) {
+                //    this.spritesets[2][name] = new Sprite(name, 3);
+                //}
+                this.spritesets[2][name] = new Sprite(name, 3);
             }
         },
     
@@ -345,7 +362,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
         },
     
         loadSprites: function() {
-            log.info("Loading sprites...");
+            console.log("Loading sprites...");
             this.spritesets = [];
             this.spritesets[0] = {};
             this.spritesets[1] = {};
@@ -365,7 +382,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 this.currentCursor = this.cursors[name];
                 this.currentCursorOrientation = orientation;
             } else {
-                log.error("Unknown cursor name :"+name);
+                console.log("Unknown cursor name :"+name);
             }
         },
     
@@ -410,8 +427,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 this.entities[entity.id] = entity;
                 this.registerEntityPosition(entity);
                 
-                if(!(entity instanceof Item && entity.wasDropped)
-                && !(this.renderer.mobile || this.renderer.tablet)) {
+                if(!(entity instanceof Item && entity.wasDropped)) {
                     entity.fadeIn(this.currentTime);
                 }
                 
@@ -425,7 +441,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 }
             }
             else {
-                log.error("This entity already exists : " + entity.id + " ("+entity.kind+")");
+                console.log("This entity already exists : " + entity.id + " ("+entity.kind+")");
             }
         },
 
@@ -435,7 +451,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 delete this.entities[entity.id];
             }
             else {
-                log.error("Cannot remove entity. Unknown ID : " + entity.id);
+                console.log("Cannot remove entity. Unknown ID : " + entity.id);
             }
         },
     
@@ -452,7 +468,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 this.removeFromRenderingGrid(item, item.gridX, item.gridY);
                 delete this.entities[item.id];
             } else {
-                log.error("Cannot remove item. Unknown ID : " + item.id);
+                console.log("Cannot remove item. Unknown ID : " + item.id);
             }
         },
     
@@ -464,7 +480,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                     this.pathingGrid[i][j] = this.map.grid[i][j];
                 }
             }
-            log.info("Initialized the pathing grid with static colliding cells.");
+            console.log("Initialized the pathing grid with static colliding cells.");
         },
     
         initEntityGrid: function() {
@@ -475,7 +491,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                     this.entityGrid[i][j] = {};
                 }
             }
-            log.info("Initialized the entity grid.");
+            console.log("Initialized the entity grid.");
         },
     
         initRenderingGrid: function() {
@@ -486,7 +502,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                     this.renderingGrid[i][j] = {};
                 }
             }
-            log.info("Initialized the rendering grid.");
+            console.log("Initialized the rendering grid.");
         },
     
         initItemGrid: function() {
@@ -497,7 +513,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                     this.itemGrid[i][j] = {};
                 }
             }
-            log.info("Initialized the item grid.");
+            console.log("Initialized the item grid.");
         },
     
         /**
@@ -518,7 +534,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                     self.animatedTiles.push(tile);
                 }
             }, 1);
-            //log.info("Initialized animated tiles.");
+            //console.log("Initialized animated tiles.");
         },
     
         addToRenderingGrid: function(entity, x, y) {
@@ -638,7 +654,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
         	var wait = setInterval(function() {
                 if(self.map.isLoaded && self.spritesLoaded()) {
                     self.ready = true;
-                    log.debug('All sprites loaded.');
+                    console.log('All sprites loaded.');
                             
                     self.loadAudio();
                     
@@ -689,11 +705,11 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
         start: function() {
             this.tick();
             this.hasNeverStarted = false;
-            log.info("Game loop started.");
+            console.log("Game loop started.");
         },
 
         stop: function() {
-            log.info("Game stopped.");
+            console.log("Game stopped.");
             this.isStopped = true;
         },
     
@@ -706,7 +722,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 return this.entities[id];
             }
             else {
-                log.error("Unknown entity id : " + id, true);
+                console.log("Unknown entity id : " + id, true);
             }
         },
 
@@ -715,7 +731,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 connecting = false; // always in dispatcher mode in the build version
     
             this.client = new GameClient(this.host, this.port);
-            
+            window.client = this.client;
             //>>excludeStart("prodHost", pragmas.prodHost);
             var config = this.app.config.local || this.app.config.dev;
             if(config) {
@@ -731,7 +747,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
             //>>includeEnd("prodHost");
             
             this.client.onDispatched(function(host, port) {
-                log.debug("Dispatched to game server "+host+ ":"+port);
+                console.log("Dispatched to game server "+host+ ":"+port);
                 
                 self.client.host = host;
                 self.client.port = port;
@@ -739,7 +755,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
             });
             
             this.client.onConnected(function() {
-                log.info("Starting client/server handshake");
+                console.log("Starting client/server handshake");
                 
                 self.player.name = self.username;
                 self.started = true;
@@ -766,7 +782,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
             });
         
             this.client.onWelcome(function(id, name, x, y, hp) {
-                log.info("Received player ID from server : "+ id);
+                console.log("Received player ID from server : "+ id);
                 self.player.id = id;
                 self.playerId = id;
                 // Always accept name received from the server which will
@@ -791,10 +807,11 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                     self.storage.initPlayer(self.player.name);
                     self.storage.savePlayer(self.renderer.getPlayerImage(),
                                             self.player.getSpriteName(),
-                                            self.player.getWeaponName());
-                    self.showNotification("Welcome to BrowserQuest!");
+                                            self.player.getWeaponName(),
+                                            self.player.skin);
+                    self.showNotification("Welcome to LoopQuest!");
                 } else {
-                    self.showNotification("Welcome back to BrowserQuest!");
+                    self.showNotification("Welcome back to LoopQuest!");
                     self.storage.setPlayerName(name);
                 }
         
@@ -842,7 +859,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 self.player.onBeforeStep(function() {
                     var blockingEntity = self.getEntityAt(self.player.nextGridX, self.player.nextGridY);
                     if(blockingEntity && blockingEntity.id !== self.playerId) {
-                        log.debug("Blocked by " + blockingEntity.id);
+                        console.log("Blocked by " + blockingEntity.id);
                     }
                     self.unregisterEntityPosition(self.player);
                 });
@@ -1017,12 +1034,12 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 });
             
                 self.player.onDeath(function() {
-                    log.info(self.playerId + " is dead");
-                
+                    console.log(self.playerId + " is dead");
+                    
                     self.player.stopBlinking();
                     self.player.setSprite(self.sprites["death"]);
                     self.player.animate("death", 120, 1, function() {
-                        log.info(self.playerId + " was removed");
+                        console.log(self.playerId + " was removed");
                     
                         self.removeEntity(self.player);
                         self.removeFromRenderingGrid(self.player, self.player.gridX, self.player.gridY);
@@ -1067,12 +1084,12 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 });
             
                 self.client.onSpawnItem(function(item, x, y) {
-                    log.info("Spawned " + Types.getKindAsString(item.kind) + " (" + item.id + ") at "+x+", "+y);
+                    console.log("Spawned " + Types.getKindAsString(item.kind) + " (" + item.id + ") at "+x+", "+y);
                     self.addItem(item, x, y);
                 });
             
                 self.client.onSpawnChest(function(chest, x, y) {
-                    log.info("Spawned chest (" + chest.id + ") at "+x+", "+y);
+                    console.log("Spawned chest (" + chest.id + ") at "+x+", "+y);
                     chest.setSprite(self.sprites[chest.getSpriteName()]);
                     chest.setGridPosition(x, y);
                     chest.setAnimation("idle_down", 150);
@@ -1082,7 +1099,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                         chest.stopBlinking();
                         chest.setSprite(self.sprites["death"]);
                         chest.setAnimation("death", 120, 1, function() {
-                            log.info(chest.id + " was removed");
+                            console.log(chest.id + " was removed");
                             self.removeEntity(chest);
                             self.removeFromRenderingGrid(chest, chest.gridX, chest.gridY);
                             self.previousClickPosition = {};
@@ -1090,7 +1107,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                     });
                 });
             
-                self.client.onSpawnCharacter(function(entity, x, y, orientation, targetId) {
+                self.client.onSpawnCharacter(function(entity, x, y, orientation, targetId,skin) {
                     if(!self.entityIdExists(entity.id)) {
                         try {
                             if(entity.id !== self.playerId) {
@@ -1098,10 +1115,14 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                                 entity.setGridPosition(x, y);
                                 entity.setOrientation(orientation);
                                 entity.idle();
-
+                                if(skin){
+                                    console.log(skin)
+                                    entity.skin = skin;
+                                    entity.switchSkin(skin);
+                                }
                                 self.addEntity(entity);
                         
-                                log.debug("Spawned " + Types.getKindAsString(entity.kind) + " (" + entity.id + ") at "+entity.gridX+", "+entity.gridY);
+                                console.log("Spawned " + Types.getKindAsString(entity.kind) + " (" + entity.id + ") at "+entity.gridX+", "+entity.gridY);
                         
                                 if(entity instanceof Character) {
                                     entity.onBeforeStep(function() {
@@ -1172,7 +1193,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                                     });
 
                                     entity.onDeath(function() {
-                                        log.info(entity.id + " is dead");
+                                        console.log(entity.id + " is dead");
                                 
                                         if(entity instanceof Mob) {
                                             // Keep track of where mobs die in order to spawn their dropped items
@@ -1183,7 +1204,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                                         entity.isDying = true;
                                         entity.setSprite(self.sprites[entity instanceof Mobs.Rat ? "rat" : "death"]);
                                         entity.animate("death", 120, 1, function() {
-                                            log.info(entity.id + " was removed");
+                                            console.log(entity.id + " was removed");
 
                                             self.removeEntity(entity);
                                             self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
@@ -1226,10 +1247,10 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                             }
                         }
                         catch(e) {
-                            log.error(e);
+                            console.log(e);
                         }
                     } else {
-                        log.debug("Character "+entity.id+" already exists. Don't respawn.");
+                        console.log("Character "+entity.id+" already exists. Don't respawn.");
                     }
                 });
 
@@ -1237,7 +1258,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                     var entity = self.getEntityById(entityId);
             
                     if(entity) {
-                        log.info("Despawning " + Types.getKindAsString(entity.kind) + " (" + entity.id+ ")");
+                        console.log("Despawning " + Types.getKindAsString(entity.kind) + " (" + entity.id+ ")");
                         
                         if(entity.gridX === self.previousClickPosition.x
                         && entity.gridY === self.previousClickPosition.y) {
@@ -1294,7 +1315,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                         } else {
                             self.removeEntity(entity);
                         }
-                        log.debug("Entity was destroyed: "+entity.id);
+                        console.log("Entity was destroyed: "+entity.id);
                     }
                 });
             
@@ -1316,7 +1337,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                         target = self.getEntityById(targetId);
                 
                     if(attacker && target && attacker.id !== self.playerId) {
-                        log.debug(attacker.id + " attacks " + target.id);
+                        console.log(attacker.id + " attacks " + target.id);
                         
                         if(attacker && target instanceof Player && target.id !== self.playerId && target.target && target.target.id === attacker.id && attacker.getDistanceToEntity(target) < 3) {
                             setTimeout(function() {
@@ -1390,6 +1411,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
 
                         if(player.hitPoints <= 0) {
                             player.die();
+                            self.isDead = true;
                         }
                         if(isHurt) {
                             player.hurt();
@@ -1522,15 +1544,19 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
             var mx = this.mouse.x,
                 my = this.mouse.y,
                 c = this.renderer.camera,
-                s = this.renderer.scale,
-                ts = this.renderer.tilesize,
-                offsetX = mx % (ts * s),
-                offsetY = my % (ts * s),
-                x = ((mx - offsetX) / (ts * s)) + c.gridX,
-                y = ((my - offsetY) / (ts * s)) + c.gridY;
-        
-                return { x: x, y: y };
+                ts = this.renderer.tilesize*this.renderer.scale,
+
+                gridX = Math.floor(mx / ts) + c.gridX,
+                gridY = Math.floor(my / ts) + c.gridY;
+                
+            //console.log(this.mouse);
+            //console.log({ gridX: gridX, gridY: gridY });
+            return { x: gridX, y: gridY };
         },
+        
+        
+        
+        
     
         /**
          * Moves a character to a given location on the world grid.
@@ -1556,7 +1582,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 this.registerEntityPosition(character);
                 this.assignBubbleTo(character);
             } else {
-                log.debug("Teleport out of bounds: "+x+", "+y);
+                console.log("Teleport out of bounds: "+x+", "+y);
             }
         },
 
@@ -1669,7 +1695,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                         });
                     }
                 }
-            }, this.renderer.mobile ? 0 : 2);
+            }, this.renderer.mobile ? 2 : 2);
         },
     
         /**
@@ -1838,7 +1864,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                     this.pathfinder.clearIgnoreList();
                 }
             } else {
-                log.error("Error while finding the path to "+x+", "+y+" for "+character.id);
+                console.log("Error while finding the path to "+x+", "+y+" for "+character.id);
             }
             return path;
         },
@@ -2230,16 +2256,15 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
         },
     
         restart: function() {
-            log.debug("Beginning restart");
+            console.log("Beginning restart");
         
             this.entities = {};
             this.initEntityGrid();
             this.initPathingGrid();
             this.initRenderingGrid();
-
             this.player = new Warrior("player", this.username);
             this.initPlayer();
-        
+            this.isDead = false;
             this.started = true;
             this.client.enable();
             this.sendHello(this.player);
@@ -2249,8 +2274,8 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
             if(this.renderer.mobile || this.renderer.tablet) {
                 this.renderer.clearScreen(this.renderer.context);
             }
-        
-            log.debug("Finished restart");
+            this.resetCamera();
+            console.log("Finished restart");
         },
     
         onGameStart: function(callback) {
@@ -2338,6 +2363,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
         },
     
         showNotification: function(message) {
+            window.ChatLog.addMessage(message);
             if(this.notification_callback) {
                 this.notification_callback(message);
             }
@@ -2353,7 +2379,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                         self.removeEntity(entity);
                     }
                 });
-                log.debug("Removed "+nb+" entities: "+_.pluck(_.reject(this.obsoleteEntities, function(id) { return id === self.player.id }), 'id'));
+                console.log("Removed "+nb+" entities: "+_.pluck(_.reject(this.obsoleteEntities, function(id) { return id === self.player.id }), 'id'));
                 this.obsoleteEntities = null;
             }
         },

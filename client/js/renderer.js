@@ -19,7 +19,8 @@ function(Camera, Item, Character, Player, Timer) {
             this.upscaledRendering = this.context.mozImageSmoothingEnabled !== undefined;
             this.supportsSilhouettes = this.upscaledRendering;
         
-            this.rescale(this.getScaleFactor());
+            this.rescale(2);
+
         
             this.lastTime = new Date();
             this.frameCount = 0;
@@ -31,7 +32,7 @@ function(Camera, Item, Character, Player, Timer) {
             this.highTileCount = 0;
         
             this.tablet = Detect.isTablet(window.innerWidth);
-            
+            //this.tablet=false;
             this.fixFlickeringTimer = new Timer(100);
         },
     
@@ -56,20 +57,20 @@ function(Camera, Item, Character, Player, Timer) {
         
             if(w <= 1000) {
                 scale = 2;
-                this.mobile = true;
+                //this.mobile = true;
             }
             else if(w <= 1500 || h <= 870) {
                 scale = 2;
             }
             else {
-                scale = 3;
+                scale = 2;
             }
-        
+            
             return scale;
         },
     
         rescale: function(factor) {
-            this.scale = this.getScaleFactor();
+            this.scale = 2;
         
             this.createCamera();
         
@@ -91,18 +92,19 @@ function(Camera, Item, Character, Player, Timer) {
         createCamera: function() {
             this.camera = new Camera(this);
             this.camera.rescale();
-        
+            this.canvas.width = this.camera.gridW * this.tilesize;
+            this.canvas.height = this.camera.gridH * this.tilesize;
             this.canvas.width = this.camera.gridW * this.tilesize * this.scale;
             this.canvas.height = this.camera.gridH * this.tilesize * this.scale;
-            log.debug("#entities set to "+this.canvas.width+" x "+this.canvas.height);
+            console.log("#entities set to "+this.canvas.width+" x "+this.canvas.height);
         
             this.backcanvas.width = this.canvas.width;
             this.backcanvas.height = this.canvas.height;
-            log.debug("#background set to "+this.backcanvas.width+" x "+this.backcanvas.height);
+            console.log("#background set to "+this.backcanvas.width+" x "+this.backcanvas.height);
         
             this.forecanvas.width = this.canvas.width;
             this.forecanvas.height = this.canvas.height;
-            log.debug("#foreground set to "+this.forecanvas.width+" x "+this.forecanvas.height);
+            console.log("#foreground set to "+this.forecanvas.width+" x "+this.forecanvas.height);
         },
     
         initFPS: function() {
@@ -229,17 +231,7 @@ function(Camera, Item, Character, Player, Timer) {
                 ds = this.upscaledRendering ? this.scale : 1;
         
             if(this.game.selectedCellVisible) {
-                if(this.mobile || this.tablet) {
-                    if(this.game.drawTarget) {
-                        var x = this.game.selectedX,
-                            y = this.game.selectedY;
-                        
-                        this.drawCellHighlight(this.game.selectedX, this.game.selectedY, "rgb(51, 255, 0)");
-                        this.lastTargetPos = { x: x,
-                                               y: y };
-                        this.game.drawTarget = false;
-                    }
-                } else {
+                
                     if(sprite && anim) {
                         var	frame = anim.currentFrame,
                             s = this.scale,
@@ -257,7 +249,6 @@ function(Camera, Item, Character, Player, Timer) {
                         this.context.translate(dx, dy);
                         this.context.drawImage(sprite.image, x, y, w, h, 0, 0, dw, dh);
                         this.context.restore();
-                    }
                 }
             }
         },
@@ -285,7 +276,7 @@ function(Camera, Item, Character, Player, Timer) {
             var s = this.upscaledRendering ? 1 : this.scale;
             _.each(arguments, function(arg) {
                 if(_.isUndefined(arg) || _.isNaN(arg) || _.isNull(arg) || arg < 0) {
-                    log.error("x:"+x+" y:"+y+" w:"+w+" h:"+h+" dx:"+dx+" dy:"+dy, true);
+                    console.log("x:"+x+" y:"+y+" w:"+w+" h:"+h+" dx:"+dx+" dy:"+dy, true);
                     throw Error("A problem occured when trying to draw on the canvas");
                 }
             });
@@ -332,7 +323,17 @@ function(Camera, Item, Character, Player, Timer) {
                 anim = entity.currentAnimation,
                 os = this.upscaledRendering ? 1 : this.scale,
                 ds = this.upscaledRendering ? this.scale : 1;
-        
+            if(entity.isPlayer){
+                //console.log(entity);
+            }
+            if(entity.isPlayer && entity.skin != undefined){
+                if(entity.skinSprite == undefined){
+                    console.log(entity);
+                    //entity.switchSkin(entity.skin);
+                }
+                sprite = entity.skinSprite;
+            }
+            //console.log(entity);
             if(anim && sprite) {
                 var	frame = anim.currentFrame,
                     s = this.scale,
@@ -352,10 +353,10 @@ function(Camera, Item, Character, Player, Timer) {
                     this.context.globalAlpha = entity.fadingAlpha;
                 }
             
-                if(!this.mobile && !this.tablet) {
-                    this.drawEntityName(entity);
-                }
-            
+                //if(!this.mobile && !this.tablet) {
+                //    this.drawEntityName(entity);
+                //}
+                this.drawEntityName(entity);
                 this.context.save();
                 if(entity.flipSpriteX) {
                     this.context.translate(dx + this.tilesize*s, dy);
@@ -477,7 +478,7 @@ function(Camera, Item, Character, Player, Timer) {
             }
             
             if(count > 0) {
-                //log.debug("count:"+count);
+                //console.log("count:"+count);
             }
         },
         
@@ -670,8 +671,12 @@ function(Camera, Item, Character, Player, Timer) {
     	        ctx = canvas.getContext('2d'),
     	        os = this.upscaledRendering ? 1 : this.scale,
     	        player = this.game.player,
-    	        sprite = player.getArmorSprite(),
-    	        spriteAnim = sprite.animationData["idle_down"],
+    	        sprite = player.getArmorSprite();
+            if(player.skin != "" && player.skin != undefined){
+                console.log(player.skinSprite);
+                sprite = player.skinSprite;
+            }
+            var spriteAnim = sprite.animationData["idle_down"],
     	        // character
     	        row = spriteAnim.row,
                 w = sprite.width * os,
@@ -708,13 +713,12 @@ function(Camera, Item, Character, Player, Timer) {
                 this.drawTerrain();
             this.background.restore();
         
-            if(this.mobile || this.tablet) {
-                this.clearScreen(this.foreground);
-                this.foreground.save();
-                    this.setCameraView(this.foreground);
-                    this.drawHighTiles(this.foreground);
-                this.foreground.restore();
-            }
+
+            this.clearScreen(this.foreground);
+            this.foreground.save();
+                this.setCameraView(this.foreground);
+                this.drawHighTiles(this.foreground);
+            this.foreground.restore();
         },
 
         renderFrame: function() {
@@ -724,12 +728,27 @@ function(Camera, Item, Character, Player, Timer) {
             else {
                 this.renderFrameDesktop();
             }
+            // After rendering, scale the canvas down to fit the screen
+            // html dom is set up like
+            // body/container/canvas
+            this.bc = document.getElementById("canvas");
+            this.scaleFactorX = this.bc.clientWidth / 960;
+            this.scaleFactorY = this.bc.clientHeight / 448;
+            
+            // Apply scale factors to the canvases
+            this.canvas.style.transform = 'scale(' + this.scaleFactorX + ',' + this.scaleFactorY + ')';
+            this.canvas.style.transformOrigin = '0 0';
+            this.backcanvas.style.transform = 'scale(' + this.scaleFactorX + ',' + this.scaleFactorY + ')';
+            this.backcanvas.style.transformOrigin = '0 0';
+            this.forecanvas.style.transform = 'scale(' + this.scaleFactorX + ',' + this.scaleFactorY + ')';
+            this.forecanvas.style.transformOrigin = '0 0';
         },
     
         renderFrameDesktop: function() {
             this.clearScreen(this.context);
         
             this.context.save();
+            this.renderStaticCanvases();
                 this.setCameraView(this.context);
                 this.drawAnimatedTiles();
             
@@ -751,15 +770,21 @@ function(Camera, Item, Character, Player, Timer) {
         },
     
         renderFrameMobile: function() {
-            this.clearDirtyRects();
-            this.preventFlickeringBug();
+            this.clearScreen(this.context);
+            //this.clearDirtyRects();
+            //this.preventFlickeringBug();
 
             this.context.save();
+            this.renderStaticCanvases();
                 this.setCameraView(this.context);
-                
-                this.drawDirtyAnimatedTiles();
+                this.drawCombatInfo();
+                //this.drawDirtyAnimatedTiles();
+                this.drawAnimatedTiles();
                 this.drawSelectedCell();
-                this.drawDirtyEntities();
+                //this.drawDirtyEntities();
+                this.drawEntities();
+                
+                
             this.context.restore();
         },
         

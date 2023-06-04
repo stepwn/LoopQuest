@@ -5,13 +5,16 @@ var fs = require('fs'),
 
 function main(config) {
     var ws = require("./ws"),
+        sequelize = require('./sequelize'), // Adjust the path to your Sequelize instance
+        Session = require('./session'), // Adjust the path to your Session model
         WorldServer = require("./worldserver"),
         Log = require('log'),
         _ = require('underscore'),
-        server = new ws.MultiVersionWebsocketServer(config.port),
+        server = new ws(config.port),
         metrics = config.metrics_enabled ? new Metrics(config) : null;
         worlds = [],
         lastTotalPlayers = 0,
+        log = new Log(),
         checkPopulationInterval = setInterval(function() {
             if(metrics && metrics.isReady) {
                 metrics.getTotalPlayers(function(totalPlayers) {
@@ -24,45 +27,52 @@ function main(config) {
                 });
             }
         }, 1000);
-    
-    switch(config.debug_level) {
+        console.log(config.debug_level);
+        switch(config.debug_level) {
         case "error":
-            log = new Log(Log.ERROR); break;
+            log = new Log(console.log); break;
         case "debug":
-            log = new Log(Log.DEBUG); break;
+            log = new Log(console.log); break;
         case "info":
-            log = new Log(Log.INFO); break;
+            log = new Log(console.log); break;
+        default:
+            log = new Log(console.log); break;
     };
     
-    log.info("Starting BrowserQuest game server...");
+    //console.log("Starting BrowserQuest game server...");
+    console.log("Starting BrowserQuest game server...");
     
     server.onConnect(function(connection) {
-        var world, // the one in which the player will be spawned
-            connect = function() {
-                if(world) {
-                    world.connect_callback(new Player(connection, world));
-                }
-            };
+        connect = function() {
+          if (world) {
+            //console.log(connection);
+            world.connect_callback(new Player(connection, world));
+          }
+        };
         
-        if(metrics) {
-            metrics.getOpenWorldCount(function(open_world_count) {
-                // choose the least populated world among open worlds
-                world = _.min(_.first(worlds, open_world_count), function(w) { return w.playerCount; });
-                connect();
+      
+      
+        if (metrics) {
+          metrics.getOpenWorldCount(function(open_world_count) {
+            // choose the least populated world among open worlds
+            world = _.min(_.first(worlds, open_world_count), function(w) {
+              return w.playerCount;
             });
-        }
-        else {
-            // simply fill each world sequentially until they are full
-            world = _.detect(worlds, function(world) {
-                return world.playerCount < config.nb_players_per_world;
-            });
-            world.updatePopulation();
             connect();
+          });
+        } else {
+          // simply fill each world sequentially until they are full
+          world = _.detect(worlds, function(world) {
+            return world.playerCount < config.nb_players_per_world;
+          });
+          world.updatePopulation();
+          connect();
         }
-    });
+      });
+      
 
     server.onError(function() {
-        log.error(Array.prototype.join.call(arguments, ", "));
+        console.log(Array.prototype.join.call(arguments, ", "));
     });
     
     var onPopulationChange = function() {
@@ -95,7 +105,8 @@ function main(config) {
     }
     
     process.on('uncaughtException', function (e) {
-        log.error('uncaughtException: ' + e);
+        //console.log('uncaughtException: ' + e);
+        console.log('uncaughtException: ' + e);
     });
 }
 

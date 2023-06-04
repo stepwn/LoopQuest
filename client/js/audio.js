@@ -16,7 +16,7 @@ define(['area'], function(Area) {
             
             var loadSoundFiles = function() {
                 var counter = _.size(self.soundNames);
-                log.info("Loading sound files...");
+                console.log("Loading sound files...");
                 _.each(self.soundNames, function(name) { self.loadSound(name, function() {
                         counter -= 1;
                         if(counter === 0) {
@@ -29,8 +29,7 @@ define(['area'], function(Area) {
             };
             
             var loadMusicFiles = function() {
-                if(!self.game.renderer.mobile) { // disable music on mobile devices
-                    log.info("Loading music files...");
+                    console.log("Loading music files...");
                     // Load the village music first, as players always start here
                     self.loadMusic(self.musicNames.shift(), function() {
                         // Then, load all the other music files
@@ -38,7 +37,7 @@ define(['area'], function(Area) {
                             self.loadMusic(name);
                         });
                     });
-                }
+                
             };
         
             if(!(Detect.isSafari() && Detect.isWindows())) {
@@ -72,13 +71,13 @@ define(['area'], function(Area) {
             
             sound.addEventListener('canplaythrough', function (e) {
                 this.removeEventListener('canplaythrough', arguments.callee, false);
-                log.debug(path + " is ready to play.");
+                console.log(path + " is ready to play.");
                 if(loaded_callback) {
                     loaded_callback();
                 }
             }, false);
             sound.addEventListener('error', function (e) {
-                log.error("Error: "+ path +" could not be loaded.");
+                console.log("Error: "+ path +" could not be loaded.");
                 self.sounds[name] = null;
             }, false);
         
@@ -98,11 +97,15 @@ define(['area'], function(Area) {
         },
     
         loadMusic: function(name, handleLoaded) {
-            this.load("audio/music/", name, handleLoaded, 1);
-            var music = this.sounds[name][0];
-            music.loop = true;
-            music.addEventListener('ended', function() { music.play() }, false);
-        },
+            if(this.load("audio/music/", name, handleLoaded, 1)){
+                var music = this.sounds[name][0];
+                music.loop = true;
+                music.addEventListener('ended', function() { music.play() }, false);
+                }
+                else{
+                    return ;
+                }
+            },
     
         getSound: function(name) {
             if(!this.sounds[name]) {
@@ -189,7 +192,7 @@ define(['area'], function(Area) {
             if(music && !music.sound.fadingOut) {
                 this.clearFadeIn(music);
                 music.sound.fadingOut = setInterval(function() {
-                    var step = 0.02;
+                    var step = 0.01;
                         volume = music.sound.volume - step;
                 
                     if(self.enabled && volume >= step) {

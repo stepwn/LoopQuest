@@ -1,0 +1,192 @@
+/* Inventory styles */
+
+#inventory {
+    position: absolute !important;
+    width: 75% !important;
+    height: 75% !important;
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    border: 2px solid #fff !important;
+    padding: 20px !important;
+    color: #fff !important;
+    font-family: "Arial", sans-serif !important;
+    font-size: 16px !important;
+    text-align: center !important;
+    z-index: 100;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+  
+  #inventory h1 {
+    font-size: 28px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  #close-inventory {
+    margin-top: 20px !important;
+    color: #fff !important;
+    font-size: 14px !important;
+  }
+  
+  #close-inventory span {
+    color: #999 !important;
+    font-size: 14px !important;
+  }
+  
+  #inventorybutton {
+    right:10vw;
+    bottom:0px;
+}
+#inventory-items {
+    display: flex;
+    flex-wrap: wrap;
+    width: 75%;
+    margin: auto;
+  }
+  
+  .inventory-item {
+    flex-basis: 32px;
+    box-sizing: border-box;
+    z-index:101;
+  }
+  
+  .inventory-item img {
+    width: 100%;
+  }
+  #HotKeyButton{
+    position:absolute;
+    bottom:5vw;
+    right:0px;
+  }
+
+  /* Weapon Inventory */
+  #weaponinventory {
+    position: absolute !important;
+    width: 75% !important;
+    height: 75% !important;
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    border: 2px solid #fff !important;
+    padding: 20px !important;
+    color: #fff !important;
+    font-family: "Arial", sans-serif !important;
+    font-size: 16px !important;
+    text-align: center !important;
+    z-index: 100;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
+  
+  #weaponinventory h1 {
+    font-size: 28px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  #close-weaponinventory {
+    margin-top: 20px !important;
+    color: #fff !important;
+    font-size: 14px !important;
+  }
+  
+  #close-weaponinventory span {
+    color: #999 !important;
+    font-size: 14px !important;
+  }
+  
+  #weaponinventorybutton {
+    position:absolute;
+    bottom:0px;
+    right:20vw;
+}
+#inventory-weapons {
+    display: flex;
+    flex-wrap: wrap;
+    width: 75%;
+    margin: auto;
+  }
+
+    /* Armor Inventory */
+    #armorinventory {
+        position: absolute !important;
+        width: 75% !important;
+        height: 75% !important;
+        background-color: rgba(0, 0, 0, 0.8) !important;
+        border: 2px solid #fff !important;
+        padding: 20px !important;
+        color: #fff !important;
+        font-family: "Arial", sans-serif !important;
+        font-size: 16px !important;
+        text-align: center !important;
+        z-index: 100;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        display: none;
+    }
+    
+      
+      #armorinventory h1 {
+        font-size: 28px !important;
+        margin-bottom: 20px !important;
+      }
+      
+      #close-armorinventory {
+        margin-top: 20px !important;
+        color: #fff !important;
+        font-size: 14px !important;
+      }
+      
+      #close-armorinventory span {
+        color: #999 !important;
+        font-size: 14px !important;
+      }
+      
+      #armorinventorybutton {
+        position:absolute;
+        bottom:0px;
+        right:25vw;
+    }
+    #inventory-armor {
+        display: flex;
+        flex-wrap: wrap;
+        width: 75%;
+        margin: auto;
+      }
+  
+  .guiButton{
+    position: absolute;
+    height: 3vw;
+    width: 3vw;
+    z-index:99;
+    bottom:0vw;
+    min-width: 32px;
+    min-height: 32px;
+  }
+#chatbutton{
+    right:15vw;
+    bottom:0px;
+}
+#weaponbutton{
+    right:20vw;
+    bottom:0px;
+}
+#armorbutton{
+    right:24vw;
+    bottom:0px;
+}
+#achievementsbutton{
+  position:absolute;
+  top:5vw;
+  right:0px;
+}
+#helpbutton{
+    right:5.5vw;
+    bottom:0px;
+}
+#mutebutton{
+    right:1vw;
+    bottom:0px;
+}

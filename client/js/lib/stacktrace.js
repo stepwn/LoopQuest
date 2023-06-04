@@ -253,6 +253,7 @@ printStackTrace.implementation.prototype = {
         }
         req.open('GET', url, false);
         req.setRequestHeader('User-Agent', 'XMLHTTP/1.0');
+        console.log('stacktrace.js');
         req.send('');
         return req.responseText;
     },

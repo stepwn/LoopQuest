@@ -16,7 +16,9 @@ define(['jquery', 'app'], function($, App) {
                 // Fix for no pointer events
                 $('body').addClass('opera');
             }
-        
+            if($('#parchment').hasClass('inventory')) {
+                app.toggleInventory();
+            }
             $('body').click(function(event) {
                 if($('#parchment').hasClass('credits')) {
                     app.toggleCredits();
@@ -25,22 +27,28 @@ define(['jquery', 'app'], function($, App) {
                 if($('#parchment').hasClass('about')) {
                     app.toggleAbout();
                 }
+                
             });
 	
         	$('.barbutton').click(function() {
         	    $(this).toggleClass('active');
         	});
-	
-        	$('#chatbutton').click(function() {
-        	    if($('#chatbutton').hasClass('active')) {
-        	        app.showChat();
-        	    } else {
+            document.getElementById("chatbutton").addEventListener("click", () => {
+                if (document.getElementById('chatbox').style.display == "none") {
+                    app.showChat();
+                } else {
                     app.hideChat();
-        	    }
-        	});
+                }
+            });
+            
+        	
 	
         	$('#helpbutton').click(function() {
                 app.toggleAbout();
+        	});
+
+            $('#inventorybutton').click(function() {
+                app.toggleInventory();
         	});
 	
         	$('#achievementsbutton').click(function() {
@@ -158,7 +166,7 @@ define(['jquery', 'app'], function($, App) {
             $('#resize-check').bind("webkitTransitionEnd", app.resizeUi.bind(app));
             $('#resize-check').bind("oTransitionEnd", app.resizeUi.bind(app));
         
-            log.info("App initialized.");
+            console.log("App initialized.");
         
             initGame();
         });
@@ -183,10 +191,11 @@ define(['jquery', 'app'], function($, App) {
 	
     		game.onGameStart(function() {
                 app.initEquipmentIcons();
+                app.initHealthBar();
     		});
     		
     		game.onDisconnect(function(message) {
-    		    $('#death').find('p').html(message+"<em>Please reload the page.</em>");
+    		    $('#death').find('p').html(message+"<em>Please <a href='https://play.loopquest.io'>reload</a> the page.</em>");
     		    $('#respawn').hide();
     		});
 	
@@ -239,7 +248,7 @@ define(['jquery', 'app'], function($, App) {
     		    app.showMessage(message);
     		});
 	
-            app.initHealthBar();
+            
 	
             $('#nameinput').attr('value', '');
     		$('#chatbox').attr('value', '');
@@ -250,6 +259,7 @@ define(['jquery', 'app'], function($, App) {
                     app.setMouseCoordinates(event.originalEvent.touches[0]);
                 	game.click();
                 	app.hideWindows();
+                    
                 });
             } else {
                 $('#foreground').click(function(event) {
@@ -260,6 +270,7 @@ define(['jquery', 'app'], function($, App) {
                 	}
                 	app.hideWindows();
                     // $('#chatinput').focus();
+                    
                 });
             }
 

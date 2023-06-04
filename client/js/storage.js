@@ -17,7 +17,8 @@ define(function() {
                     name: "",
                     weapon: "",
                     armor: "",
-                    image: ""
+                    image: "",
+                    skin: ""
                 },
                 achievements: {
                     unlocked: [],
@@ -67,6 +68,11 @@ define(function() {
             this.data.player.image = img;
             this.save();
         },
+        
+        setPlayerSkin: function(skin) {
+            this.data.player.skin = skin;
+            this.save();
+        },
 
         setPlayerArmor: function(armor) {
             this.data.player.armor = armor;
@@ -78,10 +84,11 @@ define(function() {
             this.save();
         },
 
-        savePlayer: function(img, armor, weapon) {
+        savePlayer: function(img, armor, weapon, skin) {
             this.setPlayerImage(img);
             this.setPlayerArmor(armor);
             this.setPlayerWeapon(weapon);
+            this.setPlayerSkin(skin);
         },
     
         // Achievements

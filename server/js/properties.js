@@ -1,7 +1,8 @@
 
 var Types = require("../../shared/js/gametypes");
-
+var Bow = require("../../shared/items/bow.json");
 var Properties = {
+    bow: Bow,
     rat: {
         drops: {
             flask: 40,
@@ -160,7 +161,7 @@ Properties.getArmorLevel = function(kind) {
             return Types.getArmorRank(kind) + 1;
         }
     } catch(e) {
-        log.error("No level found for armor: "+Types.getKindAsString(kind));
+        console.log("No level found for armor: "+Types.getKindAsString(kind));
     }
 };
 
@@ -168,11 +169,12 @@ Properties.getWeaponLevel = function(kind) {
     try {
         if(Types.isMob(kind)) {
             return Properties[Types.getKindAsString(kind)].weapon;
-        } else {
+        } 
+        else {
             return Types.getWeaponRank(kind) + 1;
         }
     } catch(e) {
-        log.error("No level found for weapon: "+Types.getKindAsString(kind));
+        console.log("No level found for weapon: "+Types.getKindAsString(kind));
     }
 };
 
