@@ -3,7 +3,7 @@ LoopQuest
 
 LoopQuest is a HTML5/JavaScript multiplayer game utilizing Loopring NFTs.
 
-Updated to node 20+ using modern libraries
+Updated to Node 20+ using modern libraries
 
 
 Documentation
