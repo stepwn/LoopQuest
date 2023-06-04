@@ -23,16 +23,15 @@ Note: This tool was written with OSX in mind. If you are using a different OS (e
 
 **Prerequisites:**
 
-- You need python and nodejs installed.
-- Install pip: http://www.pip-installer.org/en/latest/installing.html
-- Install lxml: `pip install lxml` (preferably within a virtualenv)
-- Optional: Install Growl + growlnotify if you are on OSX.
+- You need NodeJs installed
 
 **Usage:**
 
 1. `cd tools/maps/`
 
-2. `./export.py client` or `./export.py server`
+2. `node export.js tmx/map.tmx server`
+
+3. `node export.js tmx/map.tmx client` 
 
 You must run both commands in order to export the client and server map files. There is no one-step export command for both map types yet.
 
