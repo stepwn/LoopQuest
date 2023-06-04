@@ -1,7 +1,7 @@
-BrowserQuest
+LoopQuest
 ============
 
-BrowserQuest is a HTML5/JavaScript multiplayer game experiment.
+LoopQuest is a HTML5/JavaScript multiplayer game utilizing Loopring NFTs.
 
 
 Documentation
