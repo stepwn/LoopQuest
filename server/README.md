@@ -1,4 +1,4 @@
-BrowserQuest server documentation
+LoopQuest server documentation
 =================================
 
 The game server currently runs on nodejs v20+ (thanks to stepwn) and requires the latest versions of the following npm libraries:
